@@ -1,0 +1,70 @@
+{
+  "categories": [
+    {
+      "id": "type",
+      "items": [
+        {
+          "id": "local",
+          "name": "普通"
+        },
+        {
+          "id": "express",
+          "name": "急行"
+        }
+      ]
+    },
+    {
+      "id": "destination",
+      "items": [
+        {
+          "id": "narita_airport",
+          "name": "成田空港"
+        },
+        {
+          "id": "ueno",
+          "name": "上野"
+        },
+        {
+          "id": "haneda_airport",
+          "name": "羽田空港"
+        }
+      ]
+    },
+    {
+      "id": "information",
+      "items": [
+        {
+          "id": "none",
+          "name": ""
+        }
+      ]
+    },
+    {
+      "id": "information2",
+      "items": [
+        {
+          "id": "none",
+          "name": ""
+        }
+      ]
+    },
+    {
+      "id": "next",
+      "items": [
+        {
+          "id": "none",
+          "name": ""
+        }
+      ]
+    },
+    {
+      "id": "carNumber",
+      "items": [
+        {
+          "id": "none",
+          "name": ""
+        }
+      ]
+    }
+  ]
+}
