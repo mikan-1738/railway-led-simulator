@@ -3,6 +3,14 @@
     {
       "id": "keisei3000",
       "name": "京成3000形"
+    },
+    {
+      "id": "toeishinjuku10300_3color",
+      "name": "都営新宿線 10-300形（3色LED）"
+    },
+    {
+      "id": "toeishinjuku_fullcolor",
+      "name": "都営新宿線（フルカラーLED）"
     }
   ]
 }
