@@ -1,5 +1,13 @@
 function drawCarNumber(carNumber, matrix) {
 
+        if (dest?.text) {
+        drawTextToMatrix(
+            dest.text,
+            matrix
+        );
+        return;
+        }
+
     if (!carNumber) return;
 
     let usedNormal = true;
