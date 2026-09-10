@@ -33,3 +33,6 @@ let sizeLed = document.getElementById("led");
 
 let langIndex = 0;
 const langs = ["ja", "en"];
+
+let alternateDisplay = false;
+let alternateTimer = null;
