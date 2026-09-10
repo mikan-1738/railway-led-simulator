@@ -2,32 +2,79 @@
 // 車両管理
 
 let vehicleList = [];
+let currentVehicle = null;
+
+
+// JSONを読み込む
+async function loadJson(path) {
+    const response = await fetch(path);
+
+    if (!response.ok) {
+        throw new Error(
+            "ファイルを読み込めませんでした: " + path
+        );
+    }
+
+    return await response.json();
+}
 
 
 // 車両一覧を読み込む
 async function loadVehicles() {
-    try {
-        const response = await fetch("vehicles/vehicles.json");
+    vehicleList = await loadJson(
+        "vehicles/vehicles.json"
+    );
 
-        if (!response.ok) {
-            throw new Error("車両一覧を読み込めませんでした");
-        }
-
-        const data = await response.json();
-
-        // { vehicles: [...] } と [...] の両方に対応
-        vehicleList = Array.isArray(data)
-            ? data
-            : (data.vehicles ?? []);
-
-        window.vehicleList = vehicleList;
-
-        return vehicleList;
-
-    } catch (error) {
-        console.error(error);
-        throw error;
+    // { vehicles: [...] } に対応
+    if (!Array.isArray(vehicleList)) {
+        vehicleList = vehicleList.vehicles ?? [];
     }
+
+    window.vehicleList = vehicleList;
+
+    return vehicleList;
+}
+
+
+// 車両設定を読み込む
+async function loadConfig(vehiclePath) {
+    const config = await loadJson(
+        vehiclePath + "/config.json"
+    );
+
+    window.vehicleConfig = config;
+
+    // LEDキャンバスのサイズ
+    if (
+        typeof config.ledWidth === "number" &&
+        typeof config.ledHeight === "number"
+    ) {
+        led.width = config.ledWidth;
+        led.height = config.ledHeight;
+    }
+
+    // LED表示設定
+    if (typeof config.ledSize === "number") {
+        window.ledSize = config.ledSize;
+    }
+
+    if (typeof config.ledGap === "number") {
+        window.ledGap = config.ledGap;
+    }
+
+    return config;
+}
+
+
+// LEDデータを読み込む
+async function loadLed(vehiclePath) {
+    const data = await loadJson(
+        vehiclePath + "/led.json"
+    );
+
+    jsonData = data;
+
+    return data;
 }
 
 
@@ -66,12 +113,12 @@ async function selectVehicle(vehicle) {
         return;
     }
 
-    currentVehicle = vehicle;
-
-    const vehiclePath =
-        "vehicles/" + vehicle.id;
-
     try {
+        currentVehicle = vehicle;
+
+        const vehiclePath =
+            "vehicles/" + vehicle.id;
+
         await loadConfig(vehiclePath);
         await loadLed(vehiclePath);
 
@@ -89,7 +136,10 @@ async function selectVehicle(vehicle) {
             simulator.hidden = false;
         }
 
+        // 操作ボタンを作成
         setupButtons();
+
+        // 初期描画
         render();
 
     } catch (error) {
