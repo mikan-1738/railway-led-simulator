@@ -1,3 +1,31 @@
+function startAlternateDisplay() {
+
+    if (alternateTimer) {
+        clearInterval(alternateTimer);
+        alternateTimer = null;
+    }
+
+    alternateDisplay = false;
+
+    const destination = getItem(
+        "destination",
+        destinationId
+    );
+
+    if (!destination?.alternate) {
+        render();
+        return;
+    }
+
+    alternateTimer = setInterval(() => {
+
+        alternateDisplay = !alternateDisplay;
+
+        render();
+
+    }, destination.alternate.duration ?? 3000);
+}
+
 function render() {
     ctx.setTransform(1,0,0,1,0,0);
     ctx.globalAlpha = 1;
