@@ -127,7 +127,7 @@ function setupTypeButtons() {
 
             typeId = id;
 
-            render();
+            startAlternateDisplay();
         }
     );
 }
