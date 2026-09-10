@@ -683,3 +683,99 @@ function hasTypeInformation() {
     return !!type.view?.normal?.information
         || !!type.view?.full?.information;
 }
+
+function drawTextToMatrix(text, matrix, color = { r: 255, g: 0, b: 0 }) {
+
+    if (!text) return;
+
+    const tempCanvas = document.createElement("canvas");
+    const tempCtx = tempCanvas.getContext("2d");
+
+    const fontSize = Math.min(
+        config.ledHeight * 0.8,
+        32
+    );
+
+    tempCtx.font =
+        `bold ${fontSize}px sans-serif`;
+
+    tempCtx.textAlign = "center";
+    tempCtx.textBaseline = "middle";
+
+    const metrics =
+        tempCtx.measureText(text);
+
+    tempCanvas.width =
+        Math.ceil(metrics.width + 10);
+
+    tempCanvas.height =
+        config.ledHeight;
+
+    tempCtx.font =
+        `bold ${fontSize}px sans-serif`;
+
+    tempCtx.textAlign = "center";
+    tempCtx.textBaseline = "middle";
+
+    tempCtx.fillStyle = "white";
+
+    tempCtx.fillText(
+        text,
+        tempCanvas.width / 2,
+        tempCanvas.height / 2
+    );
+
+    const image =
+        tempCtx.getImageData(
+            0,
+            0,
+            tempCanvas.width,
+            tempCanvas.height
+        );
+
+    const startX =
+        Math.max(
+            0,
+            Math.floor(
+                (config.ledWidth - tempCanvas.width) / 2
+            )
+        );
+
+    for (
+        let y = 0;
+        y < config.ledHeight;
+        y++
+    ) {
+
+        for (
+            let x = 0;
+            x < tempCanvas.width;
+            x++
+        ) {
+
+            const px =
+                (y * tempCanvas.width + x) * 4;
+
+            const alpha =
+                image.data[px + 3];
+
+            if (alpha > 80) {
+
+                const matrixX =
+                    startX + x;
+
+                if (
+                    matrixX >= 0 &&
+                    matrixX < config.ledWidth
+                ) {
+
+                    matrix[y][matrixX] = {
+                        r: color.r,
+                        g: color.g,
+                        b: color.b
+                    };
+                }
+            }
+        }
+    }
+        }
