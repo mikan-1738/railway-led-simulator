@@ -1,61 +1,110 @@
 // buttons.js
-// LEDシミュレーターの操作ボタンを作る
+// Railway LED Simulator
+// 操作ボタンを作る
+
+
+/* =========================
+   共通ボタン作成
+========================= */
 
 function createButton(text, id, onClick) {
-    const button = document.createElement("button");
+
+    const button =
+        document.createElement("button");
 
     button.type = "button";
     button.textContent = text;
     button.dataset.id = id;
 
-    button.addEventListener("click", () => {
-        onClick(id);
-    });
+    button.addEventListener(
+        "click",
+        () => {
+            onClick(id);
+        }
+    );
 
     return button;
 }
 
 
-// カテゴリからボタンを作る
-function createCategoryButtons(categoryId, containerId, onClick) {
-    const category = getCategory(categoryId);
-    const container = document.getElementById(containerId);
+/* =========================
+   カテゴリからボタンを作成
+========================= */
+
+function createCategoryButtons(
+    categoryId,
+    containerId,
+    onClick
+) {
+
+    const category =
+        getCategory(categoryId);
+
+    const container =
+        document.getElementById(containerId);
+
 
     if (!category || !container) {
         return;
     }
 
+
     container.innerHTML = "";
 
-    // 通常の items
+
+    /* =========================
+       items形式
+    ========================= */
+
     if (category.items) {
+
         for (const item of category.items) {
-            const button = createButton(
-                item.name ?? item.label ?? item.id,
-                item.id,
-                onClick
-            );
+
+            const button =
+                createButton(
+                    item.name ??
+                    item.label ??
+                    item.id,
+                    item.id,
+                    onClick
+                );
 
             container.appendChild(button);
         }
     }
 
-    // groups を持つカテゴリ
+
+    /* =========================
+       groups形式
+    ========================= */
+
     if (category.groups) {
+
         for (const group of category.groups) {
 
-            const groupTitle = document.createElement("h3");
+            const groupTitle =
+                document.createElement("h3");
+
             groupTitle.textContent =
-                group.name ?? group.label ?? group.id;
+                group.name ??
+                group.label ??
+                group.id;
 
             container.appendChild(groupTitle);
 
-            for (const item of group.items ?? []) {
-                const button = createButton(
-                    item.name ?? item.label ?? item.id,
-                    item.id,
-                    onClick
-                );
+
+            for (
+                const item of group.items ?? []
+            ) {
+
+                const button =
+                    createButton(
+                        item.name ??
+                        item.label ??
+                        item.id,
+                        item.id,
+                        onClick
+                    );
 
                 container.appendChild(button);
             }
@@ -64,90 +113,141 @@ function createCategoryButtons(categoryId, containerId, onClick) {
 }
 
 
-// 種別ボタン
+/* =========================
+   種別
+========================= */
+
 function setupTypeButtons() {
+
     createCategoryButtons(
         "type",
         "typeGroup",
+
         (id) => {
-            selectedType = id;
+
+            typeId = id;
+
             render();
         }
     );
 }
 
 
-// 行先ボタン
+/* =========================
+   行先
+========================= */
+
 function setupDestinationButtons() {
+
     createCategoryButtons(
         "destination",
         "destinationGroup",
+
         (id) => {
-            selectedDestination = id;
+
+            destinationId = id;
+
             render();
         }
     );
 }
 
 
-// 情報表示ボタン
+/* =========================
+   情報表示
+========================= */
+
 function setupInformationButtons() {
+
     createCategoryButtons(
         "information",
         "informationGroup",
+
         (id) => {
-            selectedInformation = id;
+
+            informationId = id;
+
             render();
         }
     );
 }
 
 
-// 第2情報表示ボタン
+/* =========================
+   第2情報表示
+========================= */
+
 function setupInformation2Buttons() {
+
     createCategoryButtons(
         "information2",
         "information2Group",
+
         (id) => {
-            selectedInformation2 = id;
+
+            information2Id = id;
+
             render();
         }
     );
 }
 
 
-// 次駅ボタン
+/* =========================
+   次駅
+========================= */
+
 function setupNextButtons() {
+
     createCategoryButtons(
         "next",
         "nextGroup",
+
         (id) => {
-            selectedNext = id;
+
+            nextId = id;
+
             render();
         }
     );
 }
 
 
-// 車号ボタン
+/* =========================
+   車号
+========================= */
+
 function setupCarNumberButtons() {
+
     createCategoryButtons(
         "carNumber",
         "carNumberGroup",
+
         (id) => {
-            selectedCarNumber = id;
+
+            carNumberId = id;
+
             render();
         }
     );
 }
 
 
-// 全ボタンをセットアップ
+/* =========================
+   全ボタンセットアップ
+========================= */
+
 function setupButtons() {
+
     setupTypeButtons();
+
     setupDestinationButtons();
+
     setupInformationButtons();
+
     setupInformation2Buttons();
+
     setupNextButtons();
+
     setupCarNumberButtons();
 }
