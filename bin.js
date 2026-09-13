@@ -3,9 +3,9 @@
 // BIN形式の3色LEDデータを読み込む
 
 
-// ==============================
+// =========================
 // BINの色変換
-// ==============================
+// =========================
 
 function binColor(value) {
 
@@ -43,21 +43,24 @@ function binColor(value) {
                 b: 0
             };
     }
+
 }
 
 
-// ==============================
+// =========================
 // BIN読み込み
-// ==============================
+// =========================
 
 async function loadBin(path) {
 
-    const response = await fetch(path);
+    const response =
+        await fetch(path);
 
     if (!response.ok) {
 
         throw new Error(
-            "BINを読み込めませんでした: " + path
+            "BINを読み込めませんでした: "
+            + path
         );
 
     }
@@ -70,30 +73,48 @@ async function loadBin(path) {
         new Uint8Array(buffer);
 
 
+    // =====================
+    // ヘッダー
+    // =====================
+
     // 先頭2バイトをヘッダーとして除外
+
     const pixels =
         bytes.slice(2);
 
 
-    // 128 × 32 = 4096バイト
-    if (pixels.length !== 128 * 32) {
+    // =====================
+    // サイズ確認
+    // =====================
+
+    if (
+        pixels.length !==
+        128 * 32
+    ) {
 
         throw new Error(
-            "BINサイズが128×32ではありません。" +
-            "\nサイズ: " +
-            pixels.length
+            "BINサイズが128×32ではありません。"
+            + "\nサイズ: "
+            + pixels.length
         );
 
     }
 
 
-    // 128 × 32 のLEDマトリクス
+    // =====================
+    // LEDマトリクス作成
+    // =====================
+
     const matrix =
         Array.from(
-            { length: 32 },
+            {
+                length: 32
+            },
             () =>
                 Array.from(
-                    { length: 128 },
+                    {
+                        length: 128
+                    },
                     () => ({
                         r: 0,
                         g: 0,
@@ -103,13 +124,27 @@ async function loadBin(path) {
         );
 
 
-    // BIN → RGBマトリクス
-    for (let y = 0; y < 32; y++) {
+    // =====================
+    // BIN → RGB
+    // =====================
 
-        for (let x = 0; x < 128; x++) {
+    for (
+        let y = 0;
+        y < 32;
+        y++
+    ) {
+
+        for (
+            let x = 0;
+            x < 128;
+            x++
+        ) {
 
             const value =
-                pixels[y * 128 + x];
+                pixels[
+                    y * 128 + x
+                ];
+
 
             matrix[y][x] =
                 binColor(value);
@@ -120,12 +155,56 @@ async function loadBin(path) {
 
 
     return matrix;
+
 }
 
 
-// ==============================
-// 車両内のBINデータを読み込む
-// ==============================
+// =========================
+// BINをLEDマトリクスへコピー
+// =========================
+
+function drawBinMatrix(
+    binMatrix,
+    matrix
+) {
+
+    if (!binMatrix) {
+        return;
+    }
+
+
+    for (
+        let y = 0;
+        y < 32;
+        y++
+    ) {
+
+        for (
+            let x = 0;
+            x < 128;
+            x++
+        ) {
+
+            if (
+                matrix[y] &&
+                matrix[y][x]
+            ) {
+
+                matrix[y][x] =
+                    binMatrix[y][x];
+
+            }
+
+        }
+
+    }
+
+}
+
+
+// =========================
+// 車両のBINデータを読み込む
+// =========================
 
 async function loadVehicleBins(
     vehiclePath,
@@ -135,28 +214,36 @@ async function loadVehicleBins(
     const destination =
         data?.categories?.find(
             category =>
-                category.id === "destination"
+                category.id ===
+                "destination"
         );
 
 
-    if (!destination?.items) {
+    if (
+        !destination?.items
+    ) {
+
         return;
+
     }
 
 
-    for (const item of destination.items) {
+    for (
+        const item
+        of destination.items
+    ) {
 
-        // BIN指定がないものはスキップ
         if (!item.bin) {
             continue;
         }
 
 
         const path =
-            vehiclePath + "/" + item.bin;
+            vehiclePath
+            + "/"
+            + item.bin;
 
 
-        // BINを読み込む
         item.binMatrix =
             await loadBin(path);
 
