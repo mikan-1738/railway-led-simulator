@@ -6,11 +6,12 @@ let vehicleList = [];
 let currentVehicle = null;
 
 
-/* =========================
-   JSON読み込み
-========================= */
+// ==============================
+// JSON読み込み
+// ==============================
 
 async function loadJson(path) {
+
     const response = await fetch(path);
 
     if (!response.ok) {
@@ -23,29 +24,30 @@ async function loadJson(path) {
 }
 
 
-/* =========================
-   車両一覧読み込み
-========================= */
+// ==============================
+// 車両一覧読み込み
+// ==============================
 
 async function loadVehicles() {
+
     const data = await loadJson(
         "vehicles/vehicles.json"
     );
 
-    // 配列形式
     if (Array.isArray(data)) {
+
         vehicleList = data;
-    }
 
-    // { "vehicles": [...] } 形式
-    else if (Array.isArray(data.vehicles)) {
+    } else if (Array.isArray(data.vehicles)) {
+
         vehicleList = data.vehicles;
-    }
 
-    else {
+    } else {
+
         throw new Error(
             "vehicles.json の形式が正しくありません。"
         );
+
     }
 
     window.vehicleList = vehicleList;
@@ -54,9 +56,9 @@ async function loadVehicles() {
 }
 
 
-/* =========================
-   車両設定読み込み
-========================= */
+// ==============================
+// 車両設定読み込み
+// ==============================
 
 async function loadConfig(vehiclePath) {
 
@@ -64,49 +66,42 @@ async function loadConfig(vehiclePath) {
         vehiclePath + "/config.json"
     );
 
-    // display.js / render.js から使えるようにする
     config = data;
 
-    // 外部から確認できるようにもしておく
     window.vehicleConfig = data;
 
 
-    /* =========================
-       LEDサイズ
-    ========================= */
-
+    // LEDサイズ
     if (
         typeof data.ledWidth === "number" &&
         typeof data.ledHeight === "number"
     ) {
+
         led.width = data.ledWidth;
         led.height = data.ledHeight;
+
     }
 
 
-    /* =========================
-       LEDドットサイズ
-    ========================= */
-
+    // LEDの大きさ
     if (typeof data.ledSize === "number") {
+
         ledsize = data.ledSize;
+
     }
 
 
-    /* =========================
-       LEDドット間隔
-    ========================= */
-
+    // LED間隔
     if (typeof data.ledGap === "number") {
+
         ledgap = data.ledGap;
+
     }
 
 
-    /* =========================
-       LEDピッチ・半径
-    ========================= */
-
+    // ピッチ再計算
     pitch = ledsize + ledgap;
+
     radius = ledsize / 2;
 
 
@@ -114,9 +109,9 @@ async function loadConfig(vehiclePath) {
 }
 
 
-/* =========================
-   LEDデータ読み込み
-========================= */
+// ==============================
+// LEDデータ読み込み
+// ==============================
 
 async function loadLed(vehiclePath) {
 
@@ -130,18 +125,16 @@ async function loadLed(vehiclePath) {
 }
 
 
-/* =========================
-   車両選択ボタン作成
-========================= */
+// ==============================
+// 車両ボタン作成
+// ==============================
 
 function createVehicleButtons() {
 
     const container =
         document.getElementById("vehicleSelect");
 
-    if (!container) {
-        return;
-    }
+    if (!container) return;
 
     container.innerHTML = "";
 
@@ -160,25 +153,27 @@ function createVehicleButtons() {
         button.addEventListener(
             "click",
             () => {
+
                 selectVehicle(vehicle);
+
             }
         );
 
 
         container.appendChild(button);
+
     }
+
 }
 
 
-/* =========================
-   車両選択
-========================= */
+// ==============================
+// 車両選択
+// ==============================
 
 async function selectVehicle(vehicle) {
 
-    if (!vehicle) {
-        return;
-    }
+    if (!vehicle) return;
 
 
     try {
@@ -190,28 +185,36 @@ async function selectVehicle(vehicle) {
             "vehicles/" + vehicle.id;
 
 
-        // 設定読み込み
+        // 車両設定
         await loadConfig(vehiclePath);
 
 
-        // LEDデータ読み込み
+        // LEDデータ
         await loadLed(vehiclePath);
 
 
-        /* =========================
-           車両選択画面を隠す
-        ========================= */
+        // BINデータを持っている場合
+        // bin.js が読み込まれていれば
+        // ここでBINを読み込む
+        if (
+            typeof loadVehicleBins === "function"
+        ) {
 
+            await loadVehicleBins(
+                vehiclePath,
+                jsonData
+            );
+
+        }
+
+
+        // 車両選択画面を隠す
         const selector =
             document.getElementById(
                 "vehicleSelector"
             );
 
-
-        /* =========================
-           シミュレーターを表示
-        ========================= */
-
+        // シミュレーターを表示
         const simulator =
             document.getElementById(
                 "simulator"
@@ -219,26 +222,24 @@ async function selectVehicle(vehicle) {
 
 
         if (selector) {
+
             selector.hidden = true;
+
         }
 
 
         if (simulator) {
+
             simulator.hidden = false;
+
         }
 
 
-        /* =========================
-           操作ボタン作成
-        ========================= */
-
+        // ボタン生成
         setupButtons();
 
 
-        /* =========================
-           初回描画
-        ========================= */
-
+        // 描画
         render();
 
 
@@ -251,17 +252,20 @@ async function selectVehicle(vehicle) {
             "車両データを読み込めませんでした。\n" +
             error.message
         );
+
     }
+
 }
 
 
-/* =========================
-   車両システム初期化
-========================= */
+// ==============================
+// 車両セットアップ
+// ==============================
 
 async function setupVehicles() {
 
     await loadVehicles();
 
     createVehicleButtons();
-    }
+
+}
