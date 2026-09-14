@@ -1,0 +1,43 @@
+{
+  "categories": [
+    {
+      "id": "type",
+      "items": [
+        { "id": "local", "name": "各停", "text": "各停" },
+        { "id": "express", "name": "急行", "text": "急行" },
+        { "id": "rapid", "name": "快速", "text": "快速" }
+      ]
+    },
+    {
+      "id": "destination",
+      "items": [
+        { "id": "shibuya", "name": "渋谷", "text": "渋谷" },
+        { "id": "kichijoji", "name": "吉祥寺", "text": "吉祥寺" }
+      ]
+    },
+    {
+      "id": "information",
+      "items": [
+        { "id": "none", "name": "" }
+      ]
+    },
+    {
+      "id": "information2",
+      "items": [
+        { "id": "none", "name": "" }
+      ]
+    },
+    {
+      "id": "next",
+      "items": [
+        { "id": "none", "name": "" }
+      ]
+    },
+    {
+      "id": "carNumber",
+      "items": [
+        { "id": "none", "name": "" }
+      ]
+    }
+  ]
+}
