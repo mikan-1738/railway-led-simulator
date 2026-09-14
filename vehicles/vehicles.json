@@ -8,6 +8,18 @@
     "name": "都営新宿線 10-300形（1・2次車・3色LED）"
   },
   {
+  "id": "keio1000_fullcolor",
+  "name": "京王1000系（フルカラーLED）"
+},
+{
+  "id": "keio9000_fullcolor",
+  "name": "京王9000系（フルカラーLED）"
+},
+{
+  "id": "tokyometro8000_fullcolor",
+  "name": "東京メトロ8000系（フルカラーLED）"
+}
+  {
     "id": "toei10_300_fullcolor",
     "name": "都営新宿線 10-300形（3次車以降・フルカラーLED）"
   },
