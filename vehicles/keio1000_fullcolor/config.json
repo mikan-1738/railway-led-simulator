@@ -1,0 +1,20 @@
+{
+  "ledWidth": 128,
+  "ledHeight": 32,
+  "ledSize": 6,
+  "ledGap": 1,
+  "sceneInterval": 3000,
+
+  "hasType": true,
+  "hasDestination": true,
+  "hasInformation": false,
+  "hasInformation2": false,
+  "hasNext": false,
+  "hasCarNumber": false,
+
+  "hasCarNumberSmall": false,
+  "hasCarNumberFull": false,
+  "hasCarNumberNormal": false,
+
+  "languageSwitching": true
+}
