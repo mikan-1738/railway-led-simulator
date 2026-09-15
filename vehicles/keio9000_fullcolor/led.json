@@ -46,25 +46,46 @@
     {
       "id": "information",
       "items": [
-        { "id": "none", "name": "" }
+        {
+          "id": "none",
+          "name": "",
+          "text": ""
+        },
+        {
+          "id": "toei_shinjuku_direct",
+          "name": "都営新宿線直通",
+          "text": "都営新宿線直通"
+        }
       ]
     },
     {
       "id": "information2",
       "items": [
-        { "id": "none", "name": "" }
+        {
+          "id": "none",
+          "name": "",
+          "text": ""
+        }
       ]
     },
     {
       "id": "next",
       "items": [
-        { "id": "none", "name": "" }
+        {
+          "id": "none",
+          "name": "",
+          "text": ""
+        }
       ]
     },
     {
       "id": "carNumber",
       "items": [
-        { "id": "none", "name": "" }
+        {
+          "id": "none",
+          "name": "",
+          "text": ""
+        }
       ]
     }
   ]
