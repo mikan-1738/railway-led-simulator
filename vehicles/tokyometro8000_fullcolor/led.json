@@ -1,0 +1,120 @@
+{
+  "categories": [
+    {
+      "id": "type",
+      "items": [
+        {
+          "id": "local",
+          "name": "各停",
+          "text": "各停"
+        },
+        {
+          "id": "semi_express",
+          "name": "準急",
+          "text": "準急"
+        },
+        {
+          "id": "express",
+          "name": "急行",
+          "text": "急行"
+        }
+      ]
+    },
+    {
+      "id": "destination",
+      "items": [
+        {
+          "id": "chuo_rinkan",
+          "name": "中央林間",
+          "text": "中央林間"
+        },
+        {
+          "id": "nagatsuta",
+          "name": "長津田",
+          "text": "長津田"
+        },
+        {
+          "id": "saginuma",
+          "name": "鷺沼",
+          "text": "鷺沼"
+        },
+        {
+          "id": "suitengumae",
+          "name": "水天宮前",
+          "text": "水天宮前"
+        },
+        {
+          "id": "shibuya",
+          "name": "渋谷",
+          "text": "渋谷"
+        },
+        {
+          "id": "kita_koshigaya",
+          "name": "北越谷",
+          "text": "北越谷"
+        },
+        {
+          "id": "kuki",
+          "name": "久喜",
+          "text": "久喜"
+        },
+        {
+          "id": "minami_kurihashi",
+          "name": "南栗橋",
+          "text": "南栗橋"
+        },
+        {
+          "id": "tobu_dobutsu_koen",
+          "name": "東武動物公園",
+          "text": "東武動物公園"
+        },
+        {
+          "id": "kiyosumi_shirakawa",
+          "name": "清澄白河",
+          "text": "清澄白河"
+        },
+        {
+          "id": "oshiage",
+          "name": "押上",
+          "text": "押上"
+        }
+      ]
+    },
+    {
+      "id": "information",
+      "items": [
+        {
+          "id": "none",
+          "name": ""
+        }
+      ]
+    },
+    {
+      "id": "information2",
+      "items": [
+        {
+          "id": "none",
+          "name": ""
+        }
+      ]
+    },
+    {
+      "id": "next",
+      "items": [
+        {
+          "id": "none",
+          "name": ""
+        }
+      ]
+    },
+    {
+      "id": "carNumber",
+      "items": [
+        {
+          "id": "none",
+          "name": ""
+        }
+      ]
+    }
+  ]
+}
