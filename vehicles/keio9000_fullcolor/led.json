@@ -39,6 +39,8 @@
         { "id": "kitano", "name": "北野", "text": "北野" },
         { "id": "keio_fuchu_keiba", "name": "府中競馬正門前", "text": "府中競馬正門前" },
         { "id": "takahatafudo", "name": "高幡不動", "text": "高幡不動" }
+        { "id": "takao", "name": "高尾", "text": "高尾" },
+　　　　  { "id": "tama_dobutsu_koen", "name": "多摩動物公園", "text": "多摩動物公園" }
       ]
     },
     {
