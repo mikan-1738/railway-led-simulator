@@ -1,0 +1,69 @@
+{
+  "categories": [
+    {
+      "id": "type",
+      "items": [
+        { "id": "limited_express", "name": "特急", "text": "特急" },
+        { "id": "semi_limited_express", "name": "準特急", "text": "準特急" },
+        { "id": "express", "name": "急行", "text": "急行" },
+        { "id": "section_express", "name": "区急", "text": "区急" },
+        { "id": "commuter_rapid", "name": "通勤快速", "text": "通勤快速" },
+        { "id": "rapid", "name": "快速", "text": "快速" },
+        { "id": "local", "name": "各停", "text": "各停" }
+      ]
+    },
+    {
+      "id": "destination",
+      "items": [
+        { "id": "motoyawata", "name": "本八幡", "text": "本八幡" },
+        { "id": "mizue", "name": "瑞江", "text": "瑞江" },
+        { "id": "ojima", "name": "大島", "text": "大島" },
+        { "id": "sumiyoshi", "name": "住吉", "text": "住吉" },
+        { "id": "iwamotocho", "name": "岩本町", "text": "岩本町" },
+        { "id": "ichigaya", "name": "市ヶ谷", "text": "市ヶ谷" },
+        { "id": "shinsen_shinjuku", "name": "新線新宿", "text": "新線新宿" },
+        { "id": "shinjuku", "name": "新宿", "text": "新宿" },
+        { "id": "sasazuka", "name": "笹塚", "text": "笹塚" },
+        { "id": "hashimoto", "name": "橋本", "text": "橋本" },
+        { "id": "minami_osawa", "name": "南大沢", "text": "南大沢" },
+        { "id": "wakabadai", "name": "若葉台", "text": "若葉台" },
+        { "id": "chofu", "name": "調布", "text": "調布" },
+        { "id": "tsutsujigaoka", "name": "つつじヶ丘", "text": "つつじヶ丘" },
+        { "id": "sakurajosui", "name": "桜上水", "text": "桜上水" },
+        { "id": "hachiman_yama", "name": "八幡山", "text": "八幡山" },
+        { "id": "tobitakyu", "name": "飛田給", "text": "飛田給" },
+        { "id": "higashi_fuchu", "name": "東府中", "text": "東府中" },
+        { "id": "fuchu", "name": "府中", "text": "府中" },
+        { "id": "takaosanguchi", "name": "高尾山口", "text": "高尾山口" },
+        { "id": "keio_hachioji", "name": "京王八王子", "text": "京王八王子" },
+        { "id": "kitano", "name": "北野", "text": "北野" },
+        { "id": "keio_fuchu_keiba", "name": "府中競馬正門前", "text": "府中競馬正門前" },
+        { "id": "takahatafudo", "name": "高幡不動", "text": "高幡不動" }
+      ]
+    },
+    {
+      "id": "information",
+      "items": [
+        { "id": "none", "name": "" }
+      ]
+    },
+    {
+      "id": "information2",
+      "items": [
+        { "id": "none", "name": "" }
+      ]
+    },
+    {
+      "id": "next",
+      "items": [
+        { "id": "none", "name": "" }
+      ]
+    },
+    {
+      "id": "carNumber",
+      "items": [
+        { "id": "none", "name": "" }
+      ]
+    }
+  ]
+}
