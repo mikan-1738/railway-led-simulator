@@ -3,20 +3,20 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#111111">
+  <meta name="theme-color" content="#ffffff">
 
   <title>Railway LED Simulator</title>
 
   <style>
     :root {
-  color-scheme: light;
+      color-scheme: light;
 
-  --bg: #ffffff;
-  --panel: #f5f5f7;
-  --panel2: #ffffff;
-  --line: #d0d0d5;
-  --text: #222222;
-  --sub: #666666;
+      --bg: #ffffff;
+      --panel: #f5f5f5;
+      --panel2: #000000;
+      --line: #cccccc;
+      --text: #222222;
+      --sub: #666666;
     }
 
     * {
@@ -39,7 +39,7 @@
     header {
       padding: 18px 20px;
       border-bottom: 1px solid var(--line);
-      background: #111114;
+      background: #ffffff;
     }
 
     header h1 {
@@ -81,20 +81,31 @@
 
     button {
       appearance: none;
-      border: 1px solid var(--line);
+      border: 1px solid #000000;
       border-radius: 8px;
       padding: 10px 12px;
 
-      background: var(--panel2);
-      color: var(--text);
+      background: #000000;
+      color: #ffffff;
 
       font: inherit;
       cursor: pointer;
+
+      transition:
+        background 0.12s ease,
+        border-color 0.12s ease;
     }
 
     button:hover {
-      background: #29292f;
-      border-color: #55555d;
+      background: #333333;
+      border-color: #333333;
+    }
+
+    button.selected,
+    button.selected:hover {
+      background: #777777;
+      border-color: #777777;
+      color: #ffffff;
     }
 
     button:active {
