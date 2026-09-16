@@ -1,1 +1,68 @@
-
+{
+  "categories": [
+    {
+      "id": "type",
+      "items": [
+        {
+          "id": "one_man",
+          "name": "ワンマン",
+          "text": "ワンマン"
+        },
+        {
+          "id": "local",
+          "name": "各停",
+          "text": "各停"
+        },
+        {
+          "id": "express",
+          "name": "急行",
+          "text": "急行"
+        }
+      ]
+    },
+    {
+      "id": "destination",
+      "items": [
+        { "id": "ogose", "name": "越生", "text": "越生" },
+        { "id": "sakado", "name": "坂戸", "text": "坂戸" },
+        { "id": "shinrinkoen", "name": "森林公園", "text": "森林公園" },
+        { "id": "ogawamachi", "name": "小川町", "text": "小川町" },
+        { "id": "yorii", "name": "寄居", "text": "寄居" },
+        { "id": "funabashi", "name": "船橋", "text": "船橋" },
+        { "id": "takayanagi", "name": "高柳", "text": "高柳" },
+        { "id": "kashiwa", "name": "柏", "text": "柏" },
+        { "id": "nodashi", "name": "野田市", "text": "野田市" },
+        { "id": "nanakodai", "name": "七光台", "text": "七光台" },
+        { "id": "unga", "name": "運河", "text": "運河" },
+        { "id": "iwatsuki", "name": "岩槻", "text": "岩槻" },
+        { "id": "omiya", "name": "大宮", "text": "大宮" },
+        { "id": "tatebayashi", "name": "館林", "text": "館林" },
+        { "id": "kuzuu", "name": "葛生", "text": "葛生" }
+      ]
+    },
+    {
+      "id": "information",
+      "items": [
+        { "id": "none", "name": "" }
+      ]
+    },
+    {
+      "id": "information2",
+      "items": [
+        { "id": "none", "name": "" }
+      ]
+    },
+    {
+      "id": "next",
+      "items": [
+        { "id": "none", "name": "" }
+      ]
+    },
+    {
+      "id": "carNumber",
+      "items": [
+        { "id": "none", "name": "" }
+      ]
+    }
+  ]
+}
