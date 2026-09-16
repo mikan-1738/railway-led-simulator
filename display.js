@@ -1305,4 +1305,61 @@ function drawJsonLedText(text, matrix) {
     );
 
     const image =
-        t
+        t// ==========================================
+// JSON → LEDマトリクス描画
+// BINファイルを使わない車両用
+// ==========================================
+
+function drawJsonLedText(text, matrix) {
+
+    if (!text || !matrix) return;
+
+    const width = config.ledWidth;
+    const height = config.ledHeight;
+
+    const canvas = document.createElement("canvas");
+    const ctx = canvas.getContext("2d");
+
+    canvas.width = width;
+    canvas.height = height;
+
+    ctx.clearRect(0, 0, width, height);
+
+    // LED表示用フォント
+    const fontSize = Math.floor(height * 0.8);
+
+    ctx.font = `bold ${fontSize}px sans-serif`;
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillStyle = "white";
+
+    ctx.fillText(
+        text,
+        width / 2,
+        height / 2
+    );
+
+    const imageData =
+        ctx.getImageData(
+            0,
+            0,
+            width,
+            height
+        );
+
+    // Canvas → LEDマトリクス
+    for (let y = 0; y < height; y++) {
+
+        for (let x = 0; x < width; x++) {
+
+            const index =
+                (y * width + x) * 4;
+
+            const brightness =
+                imageData.data[index];
+
+            matrix[y][x] =
+                brightness > 80;
+        }
+    }
+}
