@@ -1,13 +1,14 @@
-// vehicle.js
+// ==========================================
 // Railway LED Simulator
-// 車両一覧・車両選択・車両JSON読み込み
+// vehicle.js
+// ==========================================
 
 let vehicleList = [];
 let currentVehicle = null;
 
 
 // ==========================================
-// JSON読み込み
+// JSON読み込み共通処理
 // ==========================================
 
 async function loadJson(path) {
@@ -49,14 +50,19 @@ async function loadVehicles() {
 
 
 // ==========================================
-// 車両設定読み込み
-// vehicles.json の config を使用
+// config.json 読み込み
 // ==========================================
 
 async function loadConfig() {
     if (!currentVehicle) {
         throw new Error(
             "車両が選択されていません。"
+        );
+    }
+
+    if (!currentVehicle.config) {
+        throw new Error(
+            "この車両には config.json の指定がありません。"
         );
     }
 
@@ -71,8 +77,7 @@ async function loadConfig() {
 
 
 // ==========================================
-// LED JSON読み込み
-// vehicles.json の led を使用
+// led.json 読み込み
 // ==========================================
 
 async function loadLed() {
@@ -82,15 +87,21 @@ async function loadLed() {
         );
     }
 
+    if (!currentVehicle.led) {
+        throw new Error(
+            "この車両には led.json の指定がありません。"
+        );
+    }
+
     jsonData = await loadJson(
         currentVehicle.led
     );
 
     window.vehicleLedData = jsonData;
 
-    if (!jsonData || !jsonData.categories) {
-        console.warn(
-            "led.json に categories がありません。"
+    if (!jsonData) {
+        throw new Error(
+            "led.json が空です。"
         );
     }
 
@@ -103,16 +114,21 @@ async function loadLed() {
 // ==========================================
 
 function createVehicleButtons() {
+
     const container =
         document.getElementById("vehicleSelect");
 
     if (!container) {
+        console.error(
+            "vehicleSelect が見つかりません。"
+        );
         return;
     }
 
     container.innerHTML = "";
 
-    for (const vehicle of vehicleList) {
+    vehicleList.forEach(vehicle => {
+
         const button =
             document.createElement("button");
 
@@ -129,7 +145,7 @@ function createVehicleButtons() {
         );
 
         container.appendChild(button);
-    }
+    });
 }
 
 
@@ -138,61 +154,86 @@ function createVehicleButtons() {
 // ==========================================
 
 async function selectVehicle(vehicle) {
+
     if (!vehicle) {
         return;
     }
 
     try {
+
         currentVehicle = vehicle;
 
-        // 車両JSONを読み込む
+        // 既存コードとの互換用
+        if (typeof selectedVehicle !== "undefined") {
+            selectedVehicle = vehicle;
+        }
+
+        // ==================================
+        // JSON読み込み
+        // ==================================
+
         await loadConfig();
         await loadLed();
 
-        // BINデータ対応
-        if (
-            typeof loadVehicleBins === "function"
-        ) {
-            await loadVehicleBins(
-                currentVehicle,
-                jsonData
-            );
-        }
 
-        // 車両選択画面を隠す
+        // ==================================
+        // 画面切り替え
+        // ==================================
+
         const selector =
             document.getElementById(
                 "vehicleSelector"
+            );
+
+        const simulator =
+            document.getElementById(
+                "simulator"
             );
 
         if (selector) {
             selector.hidden = true;
         }
 
-        // シミュレーターを表示
-        const simulator =
-            document.getElementById(
-                "simulator"
-            );
-
         if (simulator) {
             simulator.hidden = false;
         }
 
-        // ボタンを作成
-        setupButtons();
 
+        // ==================================
         // LEDサイズ設定
+        // ==================================
+
         applyVehicleConfig();
 
-        // 描画
-        render();
+
+        // ==================================
+        // 車両UI
+        // ==================================
+
+        if (typeof setupVehicleUI === "function") {
+            setupVehicleUI();
+        } else if (typeof setupButtons === "function") {
+            setupButtons();
+        }
+
+
+        // ==================================
+        // 初期描画
+        // ==================================
+
+        if (typeof render === "function") {
+            render();
+        }
 
     } catch (error) {
-        console.error(error);
+
+        console.error(
+            "車両読み込みエラー:",
+            error
+        );
 
         alert(
-            "車両データを読み込めませんでした。\n" +
+            "車両データを読み込めませんでした。\n\n" +
             error.message
         );
     }
@@ -204,36 +245,61 @@ async function selectVehicle(vehicle) {
 // ==========================================
 
 function applyVehicleConfig() {
+
     if (!config) {
         return;
     }
 
+    if (!sizeLed) {
+        console.error(
+            "LED Canvas が見つかりません。"
+        );
+        return;
+    }
+
+
+    // ======================================
     // LEDサイズ
+    // ======================================
+
     if (
         typeof config.ledSize === "number"
     ) {
         ledsize = config.ledSize;
     }
 
+
+    // ======================================
     // LED間隔
+    // ======================================
+
     if (
         typeof config.ledGap === "number"
     ) {
         ledgap = config.ledGap;
     }
 
+
+    // ======================================
     // ピッチ
+    // ======================================
+
     pitch =
         ledsize + ledgap;
 
     radius =
         ledsize / 2;
 
-    // Canvasサイズ
+
+    // ======================================
+    // LEDマトリクスのCanvasサイズ
+    // ======================================
+
     if (
         typeof config.ledWidth === "number" &&
         typeof config.ledHeight === "number"
     ) {
+
         sizeLed.width =
             config.ledWidth * pitch;
 
@@ -241,29 +307,107 @@ function applyVehicleConfig() {
             config.ledHeight * pitch;
     }
 
-    // Canvasサイズを直接設定する構成にも対応
-    if (
-        typeof config.canvasWidth === "number"
-    ) {
-        sizeLed.width =
-            config.canvasWidth;
-    }
+
+    // ======================================
+    // 円形LED
+    // ======================================
 
     if (
-        typeof config.canvasHeight === "number"
+        config.ledShape === "circle"
     ) {
+
         sizeLed.height =
-            config.canvasHeight;
+            config.ledHeight * pitch;
+    }
+
+
+    // ======================================
+    // 長方形LED
+    // ======================================
+
+    if (
+        config.ledShape === "rectangle"
+    ) {
+
+        const pitchY =
+            ledsize * 0.9 + ledgap;
+
+        sizeLed.height =
+            config.ledHeight * pitchY;
+    }
+
+
+    // ======================================
+    // 重要
+    // cacheCanvasにも同じサイズを設定
+    // ======================================
+
+    if (
+        typeof cacheCanvas !== "undefined"
+    ) {
+
+        cacheCanvas.width =
+            sizeLed.width;
+
+        cacheCanvas.height =
+            sizeLed.height;
+    }
+
+
+    // ======================================
+    // 表示サイズ調整
+    // ======================================
+
+    if (
+        typeof resizeLed === "function"
+    ) {
+        resizeLed();
     }
 }
 
 
 // ==========================================
-// 車両セットアップ
+// 車両一覧初期化
 // ==========================================
 
 async function setupVehicles() {
+
     await loadVehicles();
 
     createVehicleButtons();
-    }
+}
+
+
+// ==========================================
+// 初期化
+// ==========================================
+
+if (
+    document.readyState === "loading"
+) {
+
+    document.addEventListener(
+        "DOMContentLoaded",
+        () => {
+            setupVehicles().catch(error => {
+
+                console.error(
+                    "車両一覧の読み込みに失敗:",
+                    error
+                );
+
+            });
+        }
+    );
+
+} else {
+
+    setupVehicles().catch(error => {
+
+        console.error(
+            "車両一覧の読み込みに失敗:",
+            error
+        );
+
+    });
+}
