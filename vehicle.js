@@ -6,27 +6,26 @@
 let vehicleList = [];
 let currentVehicle = null;
 
-
-// ==========================================
-// JSON読み込み共通処理
-// ==========================================
+// ------------------------------------------
+// JSON読み込み
+// ------------------------------------------
 
 async function loadJson(path) {
     const response = await fetch(path);
 
     if (!response.ok) {
         throw new Error(
-            "ファイルを読み込めませんでした: " + path
+            `JSONを読み込めませんでした: ${path}\n` +
+            `HTTP ${response.status}`
         );
     }
 
     return await response.json();
 }
 
-
-// ==========================================
-// 車両一覧読み込み
-// ==========================================
+// ------------------------------------------
+// vehicles.json
+// ------------------------------------------
 
 async function loadVehicles() {
     const data = await loadJson(
@@ -43,15 +42,12 @@ async function loadVehicles() {
         );
     }
 
-    window.vehicleList = vehicleList;
-
     return vehicleList;
 }
 
-
-// ==========================================
-// config.json 読み込み
-// ==========================================
+// ------------------------------------------
+// config.json
+// ------------------------------------------
 
 async function loadConfig() {
     if (!currentVehicle) {
@@ -62,7 +58,7 @@ async function loadConfig() {
 
     if (!currentVehicle.config) {
         throw new Error(
-            "この車両には config.json の指定がありません。"
+            "config.json の指定がありません。"
         );
     }
 
@@ -70,15 +66,12 @@ async function loadConfig() {
         currentVehicle.config
     );
 
-    window.vehicleConfig = config;
-
     return config;
 }
 
-
-// ==========================================
-// led.json 読み込み
-// ==========================================
+// ------------------------------------------
+// led.json
+// ------------------------------------------
 
 async function loadLed() {
     if (!currentVehicle) {
@@ -89,7 +82,7 @@ async function loadLed() {
 
     if (!currentVehicle.led) {
         throw new Error(
-            "この車両には led.json の指定がありません。"
+            "led.json の指定がありません。"
         );
     }
 
@@ -97,21 +90,24 @@ async function loadLed() {
         currentVehicle.led
     );
 
-    window.vehicleLedData = jsonData;
-
     if (!jsonData) {
         throw new Error(
             "led.json が空です。"
         );
     }
 
+    if (!Array.isArray(jsonData.categories)) {
+        throw new Error(
+            "led.json に categories がありません。"
+        );
+    }
+
     return jsonData;
 }
 
-
-// ==========================================
+// ------------------------------------------
 // 車両ボタン作成
-// ==========================================
+// ------------------------------------------
 
 function createVehicleButtons() {
 
@@ -135,7 +131,7 @@ function createVehicleButtons() {
         button.type = "button";
 
         button.textContent =
-            vehicle.name ?? vehicle.id;
+            vehicle.name || vehicle.id;
 
         button.addEventListener(
             "click",
@@ -148,80 +144,84 @@ function createVehicleButtons() {
     });
 }
 
-
-// ==========================================
+// ------------------------------------------
 // 車両選択
-// ==========================================
+// ------------------------------------------
 
 async function selectVehicle(vehicle) {
-
-    if (!vehicle) {
-        return;
-    }
 
     try {
 
         currentVehicle = vehicle;
 
-        // 既存コードとの互換用
-        if (typeof selectedVehicle !== "undefined") {
-            selectedVehicle = vehicle;
-        }
+        console.log(
+            "車両選択:",
+            currentVehicle.name
+        );
 
-        // ==================================
-        // JSON読み込み
-        // ==================================
-
+        // config.json
         await loadConfig();
+
+        console.log(
+            "config.json 読み込み完了:",
+            config
+        );
+
+        // led.json
         await loadLed();
 
+        console.log(
+            "led.json 読み込み完了:",
+            jsonData
+        );
 
-        // ==================================
-        // 画面切り替え
-        // ==================================
+        // BINなどを使う場合
+        if (
+            typeof loadVehicleBins ===
+            "function"
+        ) {
+            await loadVehicleBins(
+                currentVehicle,
+                jsonData
+            );
+        }
 
+        // 車両選択画面を隠す
         const selector =
             document.getElementById(
                 "vehicleSelector"
-            );
-
-        const simulator =
-            document.getElementById(
-                "simulator"
             );
 
         if (selector) {
             selector.hidden = true;
         }
 
+        // シミュレーターを表示
+        const simulator =
+            document.getElementById(
+                "simulator"
+            );
+
         if (simulator) {
             simulator.hidden = false;
         }
 
-
-        // ==================================
         // LEDサイズ設定
-        // ==================================
-
         applyVehicleConfig();
 
-
-        // ==================================
-        // 車両UI
-        // ==================================
-
-        if (typeof setupVehicleUI === "function") {
-            setupVehicleUI();
-        } else if (typeof setupButtons === "function") {
+        // ボタン
+        if (
+            typeof setupButtons ===
+            "function"
+        ) {
             setupButtons();
         }
 
-
-        // ==================================
-        // 初期描画
-        // ==================================
-
-        if (typeof render === "function") {
+        // 描画
+        if (
+            typeof render ===
+            "function"
+        ) {
             render();
         }
 
@@ -239,10 +239,9 @@ async function selectVehicle(vehicle) {
     }
 }
 
-
-// ==========================================
-// config.json の設定を適用
-// ==========================================
+// ------------------------------------------
+// 車両ごとのLED設定
+// ------------------------------------------
 
 function applyVehicleConfig() {
 
@@ -252,37 +251,28 @@ function applyVehicleConfig() {
 
     if (!sizeLed) {
         console.error(
-            "LED Canvas が見つかりません。"
+            "LED Canvas がありません。"
         );
         return;
     }
 
-
-    // ======================================
     // LEDサイズ
-    // ======================================
-
     if (
-        typeof config.ledSize === "number"
+        typeof config.ledSize ===
+        "number"
     ) {
-        ledsize = config.ledSize;
+        ledsize =
+            config.ledSize;
     }
 
-
-    // ======================================
     // LED間隔
-    // ======================================
-
     if (
-        typeof config.ledGap === "number"
+        typeof config.ledGap ===
+        "number"
     ) {
-        ledgap = config.ledGap;
+        ledgap =
+            config.ledGap;
     }
-
-
-    // ======================================
-    // ピッチ
-    // ======================================
 
     pitch =
         ledsize + ledgap;
@@ -290,60 +280,45 @@ function applyVehicleConfig() {
     radius =
         ledsize / 2;
 
-
-    // ======================================
-    // LEDマトリクスのCanvasサイズ
-    // ======================================
-
+    // LEDドット数からCanvasサイズを計算
     if (
-        typeof config.ledWidth === "number" &&
-        typeof config.ledHeight === "number"
+        typeof config.ledWidth ===
+        "number" &&
+        typeof config.ledHeight ===
+        "number"
     ) {
 
         sizeLed.width =
-            config.ledWidth * pitch;
+            config.ledWidth *
+            pitch;
 
         sizeLed.height =
-            config.ledHeight * pitch;
+            config.ledHeight *
+            pitch;
+
     }
 
-
-    // ======================================
-    // 円形LED
-    // ======================================
-
+    // 明示的なCanvasサイズがある場合
     if (
-        config.ledShape === "circle"
+        typeof config.canvasWidth ===
+        "number"
     ) {
-
-        sizeLed.height =
-            config.ledHeight * pitch;
+        sizeLed.width =
+            config.canvasWidth;
     }
 
-
-    // ======================================
-    // 長方形LED
-    // ======================================
-
     if (
-        config.ledShape === "rectangle"
+        typeof config.canvasHeight ===
+        "number"
     ) {
-
-        const pitchY =
-            ledsize * 0.9 + ledgap;
-
         sizeLed.height =
-            config.ledHeight * pitchY;
+            config.canvasHeight;
     }
 
-
-    // ======================================
-    // 重要
-    // cacheCanvasにも同じサイズを設定
-    // ======================================
-
+    // キャッシュCanvas
     if (
-        typeof cacheCanvas !== "undefined"
+        typeof cacheCanvas !==
+        "undefined"
     ) {
 
         cacheCanvas.width =
@@ -353,61 +328,42 @@ function applyVehicleConfig() {
             sizeLed.height;
     }
 
-
-    // ======================================
-    // 表示サイズ調整
-    // ======================================
-
+    // CSSサイズ調整
     if (
-        typeof resizeLed === "function"
+        typeof resizeLed ===
+        "function"
     ) {
         resizeLed();
     }
 }
 
-
-// ==========================================
-// 車両一覧初期化
-// ==========================================
+// ------------------------------------------
+// 初期化
+// ------------------------------------------
 
 async function setupVehicles() {
 
-    await loadVehicles();
+    try {
 
-    createVehicleButtons();
-}
+        await loadVehicles();
 
+        console.log(
+            "vehicles.json 読み込み完了:",
+            vehicleList
+        );
 
-// ==========================================
-// 初期化
-// ==========================================
+        createVehicleButtons();
 
-if (
-    document.readyState === "loading"
-) {
-
-    document.addEventListener(
-        "DOMContentLoaded",
-        () => {
-            setupVehicles().catch(error => {
-
-                console.error(
-                    "車両一覧の読み込みに失敗:",
-                    error
-                );
-
-            });
-        }
-    );
-
-} else {
-
-    setupVehicles().catch(error => {
+    } catch (error) {
 
         console.error(
             "車両一覧の読み込みに失敗:",
             error
         );
 
-    });
-}
+        alert(
+            "車両一覧を読み込めませんでした。\n\n" +
+            error.message
+        );
+    }
+            }
