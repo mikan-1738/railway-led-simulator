@@ -103,3 +103,263 @@
 
     button:hover {
       background: #333333;
+      border-color: #333333;
+    }
+
+    button.selected,
+    button.selected:hover {
+      background: #777777;
+      border-color: #777777;
+      color: #ffffff;
+    }
+
+    button:active {
+      transform: translateY(1px);
+    }
+
+    #displayArea {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      min-height: 180px;
+      overflow: auto;
+
+      background: #050505;
+      border: 1px solid #292929;
+      border-radius: 10px;
+
+      padding: 18px;
+    }
+
+    #led {
+      display: block;
+      max-width: 100%;
+
+      image-rendering: pixelated;
+      background: #000;
+    }
+
+    #simulatorControls {
+      display: grid;
+      grid-template-columns:
+        repeat(auto-fit, minmax(220px, 1fr));
+
+      gap: 12px;
+    }
+
+    #simulatorControls .panel {
+      margin-bottom: 0;
+    }
+
+    .status {
+      color: var(--sub);
+      font-size: 12px;
+      margin-top: 8px;
+    }
+
+    [hidden] {
+      display: none !important;
+    }
+
+    @media (max-width: 600px) {
+      main {
+        padding: 10px;
+      }
+
+      .panel {
+        padding: 12px;
+      }
+
+      .button-grid {
+        grid-template-columns:
+          repeat(2, minmax(0, 1fr));
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <header>
+    <h1 id="siteTitle" onclick="goToTop()">
+      Railway LED Simulator
+    </h1>
+
+    <p>
+      鉄道車両のLED方向幕を再現するシミュレーター
+    </p>
+  </header>
+
+
+  <main>
+
+    <!-- 車両選択 -->
+
+    <section id="vehicleSelector" class="panel">
+
+      <h2>車両を選択</h2>
+
+      <div
+        id="vehicleSelect"
+        class="button-grid">
+      </div>
+
+      <div
+        id="vehicleStatus"
+        class="status">
+        車両一覧を読み込んでいます…
+      </div>
+
+    </section>
+
+
+    <!-- シミュレーター -->
+
+    <section id="simulator" hidden>
+
+
+      <!-- LED表示 -->
+
+      <section class="panel">
+
+        <h2>LED表示</h2>
+
+        <div id="displayArea">
+
+          <canvas
+            id="led"
+            width="1"
+            height="1">
+          </canvas>
+
+        </div>
+
+      </section>
+
+
+      <!-- 操作 -->
+
+      <div id="simulatorControls">
+
+
+        <section class="panel">
+
+          <h2>種別</h2>
+
+          <div
+            id="typeGroup"
+            class="button-grid">
+          </div>
+
+        </section>
+
+
+        <section class="panel">
+
+          <h2>行先</h2>
+
+          <div
+            id="destinationGroup"
+            class="button-grid">
+          </div>
+
+        </section>
+
+
+        <section class="panel">
+
+          <h2>案内</h2>
+
+          <div
+            id="informationGroup"
+            class="button-grid">
+          </div>
+
+        </section>
+
+
+        <section class="panel">
+
+          <h2>案内2</h2>
+
+          <div
+            id="information2Group"
+            class="button-grid">
+          </div>
+
+        </section>
+
+
+        <section class="panel">
+
+          <h2>次駅</h2>
+
+          <div
+            id="nextGroup"
+            class="button-grid">
+          </div>
+
+        </section>
+
+
+        <section class="panel">
+
+          <h2>号車</h2>
+
+          <div
+            id="carNumberGroup"
+            class="button-grid">
+          </div>
+
+        </section>
+
+
+      </div>
+
+    </section>
+
+  </main>
+
+
+  <!-- トップへ戻る -->
+
+  <script>
+    function goToTop() {
+      const vehicleSelector =
+        document.getElementById("vehicleSelector");
+
+      const simulator =
+        document.getElementById("simulator");
+
+      if (vehicleSelector) {
+        vehicleSelector.hidden = false;
+      }
+
+      if (simulator) {
+        simulator.hidden = true;
+      }
+
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+      });
+    }
+  </script>
+
+
+  <!-- JavaScript -->
+
+  <script src="dom.js"></script>
+  <script src="state.js"></script>
+  <script src="constants.js"></script>
+  <script src="json.js"></script>
+  <script src="display.js"></script>
+  <script src="render.js"></script>
+  <script src="buttons.js"></script>
+  <script src="vehicle.js"></script>
+  <script src="bin.js"></script>
+  <script src="script.js"></script>
+
+</body>
+</html>
