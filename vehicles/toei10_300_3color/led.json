@@ -1,95 +1,365 @@
-{
-  "categories": [
-    {
-      "id": "type",
-      "items": [
-        {
-          "id": "local",
-          "name": "各停",
-          "text": "各停"
-        },
-        {
-          "id": "express",
-          "name": "急行",
-          "text": "急行"
-        },
-        {
-          "id": "rapid",
-          "name": "快速",
-          "text": "快速"
-        },
-        {
-          "id": "section_express",
-          "name": "区急",
-          "text": "区急"
-        }
-      ]
-    },
-    {
-      "id": "destination",
-      "items": [
-        {
-          "id": "sasazuka",
-          "name": "笹塚",
-          "text": "笹塚"
-        },
-        {
-          "id": "shinjuku",
-          "name": "新宿",
-          "text": "新宿"
-        },
-        {
-          "id": "motoyawata",
-          "name": "本八幡",
-          "text": "本八幡"
-        },
-        {
-          "id": "hashimoto",
-          "name": "橋本",
-          "text": "橋本"
-        },
-        {
-          "id": "takaosanguchi",
-          "name": "高尾山口",
-          "text": "高尾山口"
-        }
-      ]
-    },
-    {
-      "id": "information",
-      "items": [
-        {
-          "id": "none",
-          "name": ""
-        }
-      ]
-    },
-    {
-      "id": "information2",
-      "items": [
-        {
-          "id": "none",
-          "name": ""
-        }
-      ]
-    },
-    {
-      "id": "next",
-      "items": [
-        {
-          "id": "none",
-          "name": ""
-        }
-      ]
-    },
-    {
-      "id": "carNumber",
-      "items": [
-        {
-          "id": "none",
-          "name": ""
-        }
-      ]
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#ffffff">
+
+  <title>Railway LED Simulator</title>
+
+  <style>
+    :root {
+      color-scheme: light;
+
+      --bg: #ffffff;
+      --panel: #f5f5f5;
+      --line: #cccccc;
+      --text: #222222;
+      --sub: #666666;
     }
-  ]
-}
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: var(--bg);
+      color: var(--text);
+      font-family:
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
+    }
+
+    header {
+      padding: 18px 20px;
+      border-bottom: 1px solid var(--line);
+      background: #ffffff;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 20px;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    header h1:hover {
+      opacity: 0.65;
+    }
+
+    header p {
+      margin: 4px 0 0;
+      color: var(--sub);
+      font-size: 13px;
+    }
+
+    main {
+      width: min(1200px, 100%);
+      margin: auto;
+      padding: 16px;
+    }
+
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 14px;
+    }
+
+    .panel h2 {
+      margin: 0 0 12px;
+      font-size: 16px;
+    }
+
+    .button-grid {
+      display: grid;
+      grid-template-columns:
+        repeat(auto-fill, minmax(120px, 1fr));
+      gap: 8px;
+    }
+
+    button {
+      appearance: none;
+      border: 1px solid #000000;
+      border-radius: 8px;
+      padding: 10px 12px;
+
+      background: #000000;
+      color: #ffffff;
+
+      font: inherit;
+      cursor: pointer;
+
+      transition:
+        background 0.12s ease,
+        border-color 0.12s ease;
+    }
+
+    button:hover {
+      background: #333333;
+      border-color: #333333;
+    }
+
+    button.selected,
+    button.selected:hover {
+      background: #777777;
+      border-color: #777777;
+      color: #ffffff;
+    }
+
+    button:active {
+      transform: translateY(1px);
+    }
+
+    #displayArea {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      min-height: 180px;
+      overflow: auto;
+
+      background: #050505;
+      border: 1px solid #292929;
+      border-radius: 10px;
+
+      padding: 18px;
+    }
+
+    #led {
+      display: block;
+      max-width: 100%;
+
+      image-rendering: pixelated;
+      background: #000;
+    }
+
+    #simulatorControls {
+      display: grid;
+      grid-template-columns:
+        repeat(auto-fit, minmax(220px, 1fr));
+
+      gap: 12px;
+    }
+
+    #simulatorControls .panel {
+      margin-bottom: 0;
+    }
+
+    .status {
+      color: var(--sub);
+      font-size: 12px;
+      margin-top: 8px;
+    }
+
+    [hidden] {
+      display: none !important;
+    }
+
+    @media (max-width: 600px) {
+      main {
+        padding: 10px;
+      }
+
+      .panel {
+        padding: 12px;
+      }
+
+      .button-grid {
+        grid-template-columns:
+          repeat(2, minmax(0, 1fr));
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <header>
+    <h1 id="siteTitle" onclick="goToTop()">
+      Railway LED Simulator
+    </h1>
+
+    <p>
+      鉄道車両のLED方向幕を再現するシミュレーター
+    </p>
+  </header>
+
+
+  <main>
+
+    <!-- 車両選択 -->
+
+    <section id="vehicleSelector" class="panel">
+
+      <h2>車両を選択</h2>
+
+      <div
+        id="vehicleSelect"
+        class="button-grid">
+      </div>
+
+      <div
+        id="vehicleStatus"
+        class="status">
+        車両一覧を読み込んでいます…
+      </div>
+
+    </section>
+
+
+    <!-- シミュレーター -->
+
+    <section id="simulator" hidden>
+
+
+      <!-- LED表示 -->
+
+      <section class="panel">
+
+        <h2>LED表示</h2>
+
+        <div id="displayArea">
+
+          <canvas
+            id="led"
+            width="1"
+            height="1">
+          </canvas>
+
+        </div>
+
+      </section>
+
+
+      <!-- 操作 -->
+
+      <div id="simulatorControls">
+
+
+        <section class="panel">
+
+          <h2>種別</h2>
+
+          <div
+            id="typeGroup"
+            class="button-grid">
+          </div>
+
+        </section>
+
+
+        <section class="panel">
+
+          <h2>行先</h2>
+
+          <div
+            id="destinationGroup"
+            class="button-grid">
+          </div>
+
+        </section>
+
+
+        <section class="panel">
+
+          <h2>案内</h2>
+
+          <div
+            id="informationGroup"
+            class="button-grid">
+          </div>
+
+        </section>
+
+
+        <section class="panel">
+
+          <h2>案内2</h2>
+
+          <div
+            id="information2Group"
+            class="button-grid">
+          </div>
+
+        </section>
+
+
+        <section class="panel">
+
+          <h2>次駅</h2>
+
+          <div
+            id="nextGroup"
+            class="button-grid">
+          </div>
+
+        </section>
+
+
+        <section class="panel">
+
+          <h2>号車</h2>
+
+          <div
+            id="carNumberGroup"
+            class="button-grid">
+          </div>
+
+        </section>
+
+
+      </div>
+
+    </section>
+
+  </main>
+
+
+  <!-- トップへ戻る -->
+
+  <script>
+    function goToTop() {
+      const vehicleSelector =
+        document.getElementById("vehicleSelector");
+
+      const simulator =
+        document.getElementById("simulator");
+
+      if (vehicleSelector) {
+        vehicleSelector.hidden = false;
+      }
+
+      if (simulator) {
+        simulator.hidden = true;
+      }
+
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+      });
+    }
+  </script>
+
+
+  <!-- JavaScript -->
+
+  <script src="dom.js"></script>
+  <script src="state.js"></script>
+  <script src="constants.js"></script>
+  <script src="json.js"></script>
+  <script src="display.js"></script>
+  <script src="render.js"></script>
+  <script src="buttons.js"></script>
+  <script src="vehicle.js"></script>
+  <script src="bin.js"></script>
+  <script src="script.js"></script>
+
+</body>
+</html>
