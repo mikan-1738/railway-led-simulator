@@ -1,6 +1,5 @@
 let jsonData = null;
 let config = null;
-let jsonData = null;
 
 let typeId = null;
 let destinationId = null;
