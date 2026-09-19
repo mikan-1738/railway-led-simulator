@@ -1,30 +1,44 @@
 [
   {
     "id": "keisei3000",
-    "name": "京成3000形"
+    "name": "京成3000形",
+    "config": "vehicles/keisei3000/config.json",
+    "led": "vehicles/keisei3000/led.json"
   },
   {
     "id": "toei10_300_3color",
-    "name": "都営新宿線 10-300形（1・2次車・3色LED）"
+    "name": "都営新宿線 10-300形（1・2次車・3色LED）",
+    "config": "vehicles/toei10_300_3color/config.json",
+    "led": "vehicles/toei10_300_3color/led.json"
   },
   {
     "id": "keio1000_fullcolor",
-    "name": "京王1000系（フルカラーLED）"
+    "name": "京王1000系（フルカラーLED）",
+    "config": "vehicles/keio1000_fullcolor/config.json",
+    "led": "vehicles/keio1000_fullcolor/led.json"
   },
   {
     "id": "keio9000_fullcolor",
-    "name": "京王9000系（フルカラーLED）"
+    "name": "京王9000系（フルカラーLED）",
+    "config": "vehicles/keio9000_fullcolor/config.json",
+    "led": "vehicles/keio9000_fullcolor/led.json"
   },
   {
     "id": "tokyometro8000_fullcolor",
-    "name": "東京メトロ8000系（フルカラーLED）"
+    "name": "東京メトロ8000系（フルカラーLED）",
+    "config": "vehicles/tokyometro8000_fullcolor/config.json",
+    "led": "vehicles/tokyometro8000_fullcolor/led.json"
   },
   {
     "id": "toei10_300_fullcolor",
-    "name": "都営新宿線 10-300形（3次車以降・フルカラーLED）"
+    "name": "都営新宿線 10-300形（3次車以降・フルカラーLED）",
+    "config": "vehicles/toei10_300_fullcolor/config.json",
+    "led": "vehicles/toei10_300_fullcolor/led.json"
   },
   {
     "id": "toubu_8000_3color",
-    "name": "東武8000系（3色LED）"
+    "name": "東武8000系（3色LED）",
+    "config": "vehicles/toubu_8000_3color/config.json",
+    "led": "vehicles/toubu_8000_3color/led.json"
   }
 ]
