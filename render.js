@@ -3,142 +3,42 @@
 // render.js
 // ==========================================
 
-
-// ==========================================
-// 種別変更時の交互表示
-// ==========================================
-
-function startAlternateDisplay() {
-
-    if (typeof alternateTimer !== "undefined") {
-
-        if (alternateTimer) {
-            clearInterval(alternateTimer);
-            alternateTimer = null;
-        }
-
-    }
-
-    if (typeof alternateDisplay !== "undefined") {
-        alternateDisplay = false;
-    }
-
-    const destination =
-        getItem(
-            "destination",
-            destinationId
-        );
-
-    if (!destination?.alternate) {
-        render();
-        return;
-    }
-
-    alternateTimer = setInterval(() => {
-
-        alternateDisplay =
-            !alternateDisplay;
-
-        render();
-
-    }, destination.alternate.duration ?? 3000);
-}
-
-
-// ==========================================
-// メイン描画
-// ==========================================
+// ------------------------------------------
+// 描画
+// ------------------------------------------
 
 function render() {
 
-    if (!config) {
-        return;
-    }
-
-    if (!sizeLed) {
-        return;
-    }
-
-
-    // ======================================
-    // Canvasサイズをconfigに合わせる
-    // ======================================
-
     if (
-        typeof config.ledWidth === "number" &&
-        typeof config.ledHeight === "number"
+        !config ||
+        !sizeLed
     ) {
-
-        const currentWidth =
-            config.ledWidth * pitch;
-
-        const currentHeight =
-            config.ledHeight * pitch;
-
-        if (
-            sizeLed.width !== currentWidth
-        ) {
-            sizeLed.width =
-                currentWidth;
-        }
-
-        if (
-            sizeLed.height !== currentHeight
-        ) {
-            sizeLed.height =
-                currentHeight;
-        }
-
-        if (typeof cacheCanvas !== "undefined") {
-
-            cacheCanvas.width =
-                sizeLed.width;
-
-            cacheCanvas.height =
-                sizeLed.height;
-        }
-    }
-
-
-    // ======================================
-    // 何も選択されていない場合
-    // ======================================
-
-    if (
-        typeId == null &&
-        destinationId == null &&
-        nextId == null &&
-        informationId == null &&
-        information2Id == null &&
-        lineId == null &&
-        carNumberId == null
-    ) {
-
-        const emptyMatrix =
-            createEmptyMatrix();
-
-        drawMatrix(
-            emptyMatrix,
-            cacheCtx
-        );
-
-        drawCacheToCanvas();
-
         return;
     }
 
+    const matrix =
+        createDisplayMatrix();
 
-    // ======================================
-    // 空のLEDマトリクスを作る
-    // ======================================
+    currentMatrix =
+        matrix;
+
+    drawMatrix(
+        matrix,
+        cacheCtx
+    );
+
+    drawCacheToCanvas();
+}
+
+
+// ------------------------------------------
+// 表示matrix作成
+// ------------------------------------------
+
+function createDisplayMatrix() {
 
     const matrix =
         createEmptyMatrix();
-
-
-    // ======================================
-    // JSONデータ取得
-    // ======================================
 
     const type =
         getItem(
@@ -177,401 +77,185 @@ function render() {
         );
 
 
-    // ======================================
-    // 表示モード
-    // ======================================
-
-    const mode =
-        informationMode || "destination";
-
-
-    // ======================================
-    // 種別
-    // ======================================
-
-    if (type) {
-
-        const position =
-            config.destinationPosition ??
-            "normal";
-
-        if (position === "next") {
-
-            if (
-                typeof isTypeFullScreen ===
-                "function" &&
-                isTypeFullScreen(type)
-            ) {
-
-                drawType(
-                    type,
-                    matrix
-                );
-
-            } else {
-
-                if (
-                    typeof drawTypeSmall ===
-                    "function"
-                ) {
-
-                    drawTypeSmall(
-                        type,
-                        matrix
-                    );
-
-                }
-
-            }
-
-        } else {
-
-            if (
-                typeof drawType ===
-                "function"
-            ) {
-
-                drawType(
-                    type,
-                    matrix
-                );
-
-            }
-
-        }
-    }
-
-
-    // ======================================
-    // 種別が全面表示の場合
-    // ======================================
-
-    let fullType = false;
-
-    if (
-        typeof isTypeFullScreen ===
-        "function"
-    ) {
-
-        fullType =
-            isTypeFullScreen(type);
-    }
-
-
-    if (!fullType) {
-
-
-        // ==================================
-        // 行先
-        // ==================================
-
-        if (
-            mode === "destination" &&
-            destinationId != null
-        ) {
-
-            if (showNext) {
-
-                if (
-                    typeof drawDestinationSmall ===
-                    "function"
-                ) {
-
-                    drawDestinationSmall(
-                        destination,
-                        matrix
-                    );
-
-                }
-
-            } else {
-
-                if (
-                    typeof drawDestination ===
-                    "function"
-                ) {
-
-                    drawDestination(
-                        destination,
-                        matrix
-                    );
-
-                }
-            }
-        }
-
-
-        // ==================================
-        // 行先＋次駅
-        // ==================================
-
-        if (
-            mode === "destination_next" &&
-            destinationId != null
-        ) {
-
-            if (
-                typeof drawDestination ===
-                "function"
-            ) {
-
-                drawDestination(
-                    destination,
-                    matrix
-                );
-
-            }
-        }
-
-
-        // ==================================
-        // 情報
-        // ==================================
-
-        if (
-            mode === "information" &&
-            informationId != null
-        ) {
-
-            if (
-                information?.view?.small &&
-                typeof drawInformationSmall ===
-                "function"
-            ) {
-
-                drawInformationSmall(
-                    information,
-                    matrix
-                );
-
-            } else {
-
-                if (
-                    typeof drawInformation ===
-                    "function"
-                ) {
-
-                    drawInformation(
-                        information,
-                        matrix
-                    );
-
-                }
-            }
-        }
-
-
-        // ==================================
-        // 情報2
-        // ==================================
-
-        if (
-            mode === "information2" &&
-            information2Id != null
-        ) {
-
-            if (
-                typeof drawInformation2 ===
-                "function"
-            ) {
-
-                drawInformation2(
-                    information2,
-                    matrix
-                );
-
-            }
-        }
-
-
-        // ==================================
-        // 情報＋次駅
-        // ==================================
-
-        if (
-            mode === "information_next"
-        ) {
-
-            if (
-                destinationId != null &&
-                typeof drawDestinationSmall ===
-                "function"
-            ) {
-
-                drawDestinationSmall(
-                    destination,
-                    matrix
-                );
-
-            }
-
-            if (
-                informationId != null &&
-                typeof drawInformation ===
-                "function"
-            ) {
-
-                drawInformation(
-                    information,
-                    matrix
-                );
-
-            }
-        }
-
-
-        // ==================================
-        // 車号
-        // ==================================
-
-        if (
-            mode === "carNumber" &&
-            carNumberId != null
-        ) {
-
-            if (
-                typeof drawCarNumber ===
-                "function"
-            ) {
-
-                drawCarNumber(
-                    carNumber,
-                    matrix
-                );
-
-            }
-        }
-
-
-        // ==================================
-        // 車号＋行先
-        // ==================================
-
-        if (
-            mode === "carNumber_destination" &&
-            carNumberId != null
-        ) {
-
-            if (
-                typeof drawCarNumber ===
-                "function"
-            ) {
-
-                drawCarNumber(
-                    carNumber,
-                    matrix
-                );
-
-            }
-        }
-
-
-        // ==================================
-        // 次駅
-        // ==================================
-
-        if (
-            showNext &&
-            nextId != null &&
-            next
-        ) {
-
-            if (
-                mode === "destination" ||
-                mode === "information"
-            ) {
-
-                if (
-                    typeof drawNext ===
-                    "function"
-                ) {
-
-                    drawNext(
-                        next,
-                        matrix
-                    );
-
-                }
-            }
-        }
-
-
-        // ==================================
-        // 車号＋小型行先など
-        // ==================================
-
-        if (
-            mode === "carNumber_destination" &&
-            destinationId != null
-        ) {
-
-            if (
-                typeof drawDestinationSmall ===
-                "function"
-            ) {
-
-                drawDestinationSmall(
-                    destination,
-                    matrix
-                );
-
-            }
-        }
-    }
-
-
-    // ======================================
-    // 車号小型表示
-    // ======================================
+    // --------------------------------------
+    // 号車
+    // --------------------------------------
 
     if (
         config.hasCarNumberSmall &&
         carNumber
     ) {
 
+        drawCarNumber(
+            carNumber,
+            matrix
+        );
+    }
+
+
+    // --------------------------------------
+    // 種別
+    // --------------------------------------
+
+    if (type) {
+
         if (
-            typeof drawCarNumber ===
-            "function"
+            isTypeFullScreen(
+                type
+            )
+        ) {
+
+            drawType(
+                type,
+                matrix
+            );
+
+        } else {
+
+            drawType(
+                type,
+                matrix
+            );
+        }
+    }
+
+
+    // --------------------------------------
+    // 全面表示
+    // --------------------------------------
+
+    const fullType =
+        isTypeFullScreen(
+            type
+        );
+
+    if (
+        fullType
+    ) {
+
+        return matrix;
+    }
+
+
+    // --------------------------------------
+    // 行先
+    // --------------------------------------
+
+    if (
+        informationMode ===
+        "destination"
+    ) {
+
+        if (
+            destination
+        ) {
+
+            drawDestination(
+                destination,
+                matrix
+            );
+        }
+    }
+
+
+    // --------------------------------------
+    // 案内
+    // --------------------------------------
+
+    if (
+        informationMode ===
+        "information"
+    ) {
+
+        if (
+            information
+        ) {
+
+            drawInformation(
+                information,
+                matrix
+            );
+        }
+    }
+
+
+    // --------------------------------------
+    // 案内2
+    // --------------------------------------
+
+    if (
+        informationMode ===
+        "information2"
+    ) {
+
+        if (
+            information2
+        ) {
+
+            drawInformation2(
+                information2,
+                matrix
+            );
+        }
+    }
+
+
+    // --------------------------------------
+    // 号車
+    // --------------------------------------
+
+    if (
+        informationMode ===
+        "carNumber"
+    ) {
+
+        if (
+            carNumber
         ) {
 
             drawCarNumber(
                 carNumber,
                 matrix
             );
-
         }
     }
 
 
-    // ======================================
-    // LEDマトリクスを描画
-    // ======================================
+    // --------------------------------------
+    // 次駅
+    // --------------------------------------
 
-    drawMatrix(
-        matrix,
-        cacheCtx
-    );
+    if (
+        showNext &&
+        next
+    ) {
+
+        drawNext(
+            next,
+            matrix
+        );
+    }
 
 
-    // ======================================
-    // キャッシュCanvas → 本物のCanvas
-    // ======================================
-
-    drawCacheToCanvas();
+    return matrix;
 }
 
 
-// ==========================================
-// 空のLEDマトリクス作成
-// ==========================================
+// ------------------------------------------
+// 空のmatrix
+// ------------------------------------------
 
 function createEmptyMatrix() {
 
     const width =
-        Number(config?.ledWidth) || 0;
+        Number(
+            config?.ledWidth
+        ) || 0;
 
     const height =
-        Number(config?.ledHeight) || 0;
+        Number(
+            config?.ledHeight
+        ) || 0;
 
     return Array.from(
         {
@@ -592,34 +276,22 @@ function createEmptyMatrix() {
 }
 
 
-// ==========================================
-// LEDマトリクス描画
-// ==========================================
+// ------------------------------------------
+// matrixをCanvasへ描画
+// ------------------------------------------
 
 function drawMatrix(
     matrix,
-    targetCtx = ctx
+    targetCtx
 ) {
 
-    if (!config) {
+    if (
+        !matrix ||
+        !targetCtx ||
+        !config
+    ) {
         return;
     }
-
-    if (!targetCtx) {
-        return;
-    }
-
-
-    const width =
-        Number(config.ledWidth) || 0;
-
-    const height =
-        Number(config.ledHeight) || 0;
-
-
-    // ======================================
-    // 背景
-    // ======================================
 
     targetCtx.setTransform(
         1,
@@ -630,7 +302,8 @@ function drawMatrix(
         0
     );
 
-    targetCtx.globalAlpha = 1;
+    targetCtx.globalAlpha =
+        1;
 
     targetCtx.fillStyle =
         "rgb(0,0,0)";
@@ -643,9 +316,16 @@ function drawMatrix(
     );
 
 
-    // ======================================
-    // LEDを1個ずつ描画
-    // ======================================
+    const width =
+        Number(
+            config.ledWidth
+        ) || 0;
+
+    const height =
+        Number(
+            config.ledHeight
+        ) || 0;
+
 
     for (
         let y = 0;
@@ -666,69 +346,50 @@ function drawMatrix(
                     b: 0
                 };
 
-            drawLED(
-                targetCtx,
-                x,
-                y,
-                pixel
-            );
+
+            if (
+                config.ledShape ===
+                "rectangle"
+            ) {
+
+                drawLEDRectangle(
+                    targetCtx,
+                    x,
+                    y,
+                    pixel
+                );
+
+            } else {
+
+                drawLEDCircle(
+                    targetCtx,
+                    x,
+                    y,
+                    pixel
+                );
+            }
         }
     }
 }
 
 
-// ==========================================
-// LED 1個を描画
-// ==========================================
+// ------------------------------------------
+// 円形LED
+// ------------------------------------------
 
-function drawLED(
+function drawLEDCircle(
     targetCtx,
     x,
     y,
     color
 ) {
 
-    if (!targetCtx) {
-        return;
-    }
-
-    const r =
-        Number(color?.r) || 0;
-
-    const g =
-        Number(color?.g) || 0;
-
-    const b =
-        Number(color?.b) || 0;
-
-
     targetCtx.fillStyle =
-        `rgb(${r},${g},${b})`;
-
-
-    const ledShape =
-        config?.ledShape ?? "circle";
-
-
-    if (ledShape === "rectangle") {
-
-        targetCtx.fillRect(
-            x * pitch,
-            y * (
-                ledsize * 0.9 +
-                ledgap
-            ),
-            ledsize,
-            ledsize
-        );
-
-        return;
-    }
-
-
-    // ======================================
-    // 円形LED
-    // ======================================
+        `rgb(
+            ${color.r},
+            ${color.g},
+            ${color.b}
+        )`;
 
     targetCtx.beginPath();
 
@@ -744,27 +405,46 @@ function drawLED(
 }
 
 
-// ==========================================
-// Canvasキャッシュを本体へ表示
-// ==========================================
+// ------------------------------------------
+// 長方形LED
+// ------------------------------------------
+
+function drawLEDRectangle(
+    targetCtx,
+    x,
+    y,
+    color
+) {
+
+    targetCtx.fillStyle =
+        `rgb(
+            ${color.r},
+            ${color.g},
+            ${color.b}
+        )`;
+
+    targetCtx.fillRect(
+        x * pitch,
+        y * pitchY,
+        ledsize,
+        ledsize * 0.9
+    );
+}
+
+
+// ------------------------------------------
+// cacheCanvas → 表示Canvas
+// ------------------------------------------
 
 function drawCacheToCanvas() {
 
-    if (!sizeLed) {
-        return;
-    }
-
     if (
-        typeof cacheCanvas ===
-        "undefined"
+        !sizeLed ||
+        !cacheCanvas ||
+        !ctx
     ) {
         return;
     }
-
-    if (!cacheCanvas) {
-        return;
-    }
-
 
     ctx.setTransform(
         1,
@@ -775,8 +455,8 @@ function drawCacheToCanvas() {
         0
     );
 
-    ctx.globalAlpha = 1;
-
+    ctx.globalAlpha =
+        1;
 
     ctx.clearRect(
         0,
@@ -784,7 +464,6 @@ function drawCacheToCanvas() {
         sizeLed.width,
         sizeLed.height
     );
-
 
     ctx.drawImage(
         cacheCanvas,
@@ -794,80 +473,18 @@ function drawCacheToCanvas() {
 }
 
 
-// ==========================================
-// RGB画像データをLEDマトリクスへ配置
-// ==========================================
-
-function drawImage(
-    displayData,
-    startX,
-    startY,
-    matrix
-) {
-
-    if (!displayData) {
-        return;
-    }
-
-    if (!matrix) {
-        return;
-    }
-
-
-    const data =
-        displayData.data ?? [];
-
-    let index = 0;
-
-
-    for (
-        let y = 0;
-        y < displayData.height;
-        y++
-    ) {
-
-        for (
-            let x = 0;
-            x < displayData.width;
-            x++
-        ) {
-
-            const targetY =
-                startY + y;
-
-            const targetX =
-                startX + x;
-
-
-            if (
-                matrix[targetY] &&
-                matrix[targetY][targetX]
-            ) {
-
-                matrix[targetY][targetX] = {
-                    r: data[index] ?? 0,
-                    g: data[index + 1] ?? 0,
-                    b: data[index + 2] ?? 0
-                };
-            }
-
-
-            index += 3;
-        }
-    }
-}
-
-
-// ==========================================
-// Canvasを黒にする
-// ==========================================
+// ------------------------------------------
+// Canvasクリア
+// ------------------------------------------
 
 function clearMatrix() {
 
-    if (!ctx || !sizeLed) {
+    if (
+        !sizeLed ||
+        !ctx
+    ) {
         return;
     }
-
 
     ctx.setTransform(
         1,
@@ -878,12 +495,8 @@ function clearMatrix() {
         0
     );
 
-    ctx.globalAlpha = 1;
-
-
     ctx.fillStyle =
         "rgb(0,0,0)";
-
 
     ctx.fillRect(
         0,
@@ -894,9 +507,8 @@ function clearMatrix() {
 
 
     if (
-        typeof cacheCanvas !==
-        "undefined" &&
-        cacheCanvas
+        cacheCanvas &&
+        cacheCtx
     ) {
 
         cacheCtx.setTransform(
@@ -918,4 +530,4 @@ function clearMatrix() {
             cacheCanvas.height
         );
     }
-        }
+}
