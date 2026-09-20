@@ -4,36 +4,13 @@
 // 表示データ → LED matrix
 // ==========================================
 
-
-// ==========================================
-// 3色LED
-// ==========================================
-
 const LED_COLOR = {
-    orange: {
-        r: 255,
-        g: 105,
-        b: 0
-    },
-
-    red: {
-        r: 255,
-        g: 40,
-        b: 60
-    },
-
-    green: {
-        r: 100,
-        g: 190,
-        b: 40
-    }
+    orange: { r: 255, g: 105, b: 0 },
+    red:    { r: 255, g: 40,  b: 60 },
+    green:  { r: 100, g: 190, b: 40 }
 };
 
-
-// ==========================================
-// 都営10-300形 3色LED レイアウト
-// ==========================================
-
+// 都営10-300形 1・2次車 3色LED
 const TOEI_3COLOR_LAYOUT = {
     typeX: 0,
     typeWidth: 40,
@@ -44,7 +21,7 @@ const TOEI_3COLOR_LAYOUT = {
 
 
 // ==========================================
-// 表示データ取得
+// JSON表示データ
 // ==========================================
 
 function getDisplayData(item, view = "normal") {
@@ -64,7 +41,7 @@ function getDisplayData(item, view = "normal") {
 
 
 // ==========================================
-// 表示色
+// 色
 // ==========================================
 
 function getItemColor(item, category = "") {
@@ -82,15 +59,10 @@ function getItemColor(item, category = "") {
             };
         }
 
-        if (
-            LED_COLOR[item.color]
-        ) {
+        if (LED_COLOR[item.color]) {
             return LED_COLOR[item.color];
         }
     }
-
-
-    // 種別ごとの3色
 
     if (category === "type") {
 
@@ -111,92 +83,7 @@ function getItemColor(item, category = "") {
         }
     }
 
-
-    // 行き先などの通常表示
-
     return LED_COLOR.orange;
-}
-
-
-// ==========================================
-// 横幅取得
-// ==========================================
-
-function getItemWidth(
-    item,
-    view = "normal"
-) {
-
-    const data =
-        getDisplayData(
-            item,
-            view
-        );
-
-    if (data?.width) {
-
-        return Number(
-            data.width
-        );
-    }
-
-    if (item?.text) {
-
-        return Math.max(
-            8,
-            item.text.length * 8
-        );
-    }
-
-    return 0;
-}
-
-
-// ==========================================
-// 号車
-// ==========================================
-
-function drawCarNumber(
-    carNumber,
-    matrix
-) {
-
-    if (!carNumber) {
-        return;
-    }
-
-    const data =
-        getDisplayData(
-            carNumber
-        );
-
-    if (data) {
-
-        drawImage(
-            data,
-            0,
-            0,
-            matrix
-        );
-
-        return;
-    }
-
-    if (carNumber.text) {
-
-        drawTextToMatrix(
-            carNumber.text,
-            matrix,
-            0,
-            0,
-            128,
-            32,
-            getItemColor(
-                carNumber,
-                "carNumber"
-            )
-        );
-    }
 }
 
 
@@ -204,75 +91,43 @@ function drawCarNumber(
 // 種別
 // ==========================================
 
-function drawType(
-    type,
-    matrix
-) {
+function drawType(type, matrix) {
 
     if (!type) {
         return;
     }
 
-
     const data =
-        getDisplayData(
-            type
-        );
-
-
-    // JSON画像がある場合
+        getDisplayData(type);
 
     if (data) {
 
         drawImage(
             data,
-
             TOEI_3COLOR_LAYOUT.typeX,
-
             0,
-
             matrix
         );
 
         return;
     }
 
-
-    // 通常テキスト
-
     if (type.text) {
 
         drawTextToMatrix(
-
             type.text,
-
             matrix,
-
             TOEI_3COLOR_LAYOUT.typeX,
-
             0,
-
             TOEI_3COLOR_LAYOUT.typeWidth,
-
             32,
-
-            getItemColor(
-                type,
-                "type"
-            )
+            getItemColor(type, "type")
         );
     }
 }
 
 
-// ==========================================
-// 種別小
-// ==========================================
-
-function drawTypeSmall(
-    type,
-    matrix
-) {
+function drawTypeSmall(type, matrix) {
 
     drawType(
         type,
@@ -282,13 +137,10 @@ function drawTypeSmall(
 
 
 // ==========================================
-// 行き先
+// 行先
 // ==========================================
 
-function drawDestination(
-    destination,
-    matrix
-) {
+function drawDestination(destination, matrix) {
 
     if (!destination) {
         return;
@@ -296,19 +148,14 @@ function drawDestination(
 
 
     // BINデータ
-
     if (destination.binMatrix) {
 
-        drawBinMatrixAt(
+        drawBinMatrixToArea(
             destination.binMatrix,
             matrix,
-
             TOEI_3COLOR_LAYOUT.destinationX,
-
             0,
-
             TOEI_3COLOR_LAYOUT.destinationWidth,
-
             32
         );
 
@@ -317,22 +164,14 @@ function drawDestination(
 
 
     const data =
-        getDisplayData(
-            destination
-        );
-
-
-    // JSON画像
+        getDisplayData(destination);
 
     if (data) {
 
         drawImage(
             data,
-
             TOEI_3COLOR_LAYOUT.destinationX,
-
             0,
-
             matrix
         );
 
@@ -340,41 +179,22 @@ function drawDestination(
     }
 
 
-    // テキスト
-
     if (destination.text) {
 
         drawTextToMatrix(
-
             destination.text,
-
             matrix,
-
             TOEI_3COLOR_LAYOUT.destinationX,
-
             0,
-
             TOEI_3COLOR_LAYOUT.destinationWidth,
-
             32,
-
-            getItemColor(
-                destination,
-                "destination"
-            )
+            getItemColor(destination, "destination")
         );
     }
 }
 
 
-// ==========================================
-// 行き先小
-// ==========================================
-
-function drawDestinationSmall(
-    destination,
-    matrix
-) {
+function drawDestinationSmall(destination, matrix) {
 
     drawDestination(
         destination,
@@ -387,19 +207,14 @@ function drawDestinationSmall(
 // 案内
 // ==========================================
 
-function drawInformation(
-    information,
-    matrix
-) {
+function drawInformation(information, matrix) {
 
     if (!information) {
         return;
     }
 
     const data =
-        getDisplayData(
-            information
-        );
+        getDisplayData(information);
 
     if (data) {
 
@@ -431,10 +246,7 @@ function drawInformation(
 }
 
 
-function drawInformationSmall(
-    information,
-    matrix
-) {
+function drawInformationSmall(information, matrix) {
 
     drawInformation(
         information,
@@ -443,10 +255,7 @@ function drawInformationSmall(
 }
 
 
-function drawInformation2(
-    information,
-    matrix
-) {
+function drawInformation2(information, matrix) {
 
     drawInformation(
         information,
@@ -459,19 +268,14 @@ function drawInformation2(
 // 次駅
 // ==========================================
 
-function drawNext(
-    next,
-    matrix
-) {
+function drawNext(next, matrix) {
 
     if (!next) {
         return;
     }
 
     const data =
-        getDisplayData(
-            next
-        );
+        getDisplayData(next);
 
     if (data) {
 
@@ -504,7 +308,50 @@ function drawNext(
 
 
 // ==========================================
-// 幅計算
+// 号車
+// ==========================================
+
+function drawCarNumber(carNumber, matrix) {
+
+    if (!carNumber) {
+        return;
+    }
+
+    const data =
+        getDisplayData(carNumber);
+
+    if (data) {
+
+        drawImage(
+            data,
+            0,
+            0,
+            matrix
+        );
+
+        return;
+    }
+
+    if (carNumber.text) {
+
+        drawTextToMatrix(
+            carNumber.text,
+            matrix,
+            0,
+            0,
+            128,
+            32,
+            getItemColor(
+                carNumber,
+                "carNumber"
+            )
+        );
+    }
+}
+
+
+// ==========================================
+// 幅
 // ==========================================
 
 function getTypeWidth(
@@ -532,49 +379,59 @@ function getCarNumberWidth(
 }
 
 
+function getItemWidth(
+    item,
+    view = "normal"
+) {
+
+    const data =
+        getDisplayData(
+            item,
+            view
+        );
+
+    if (data?.width) {
+
+        return Number(
+            data.width
+        );
+    }
+
+    if (item?.text) {
+
+        return Math.max(
+            8,
+            item.text.length * 8
+        );
+    }
+
+    return 0;
+}
+
+
 // ==========================================
 // 全面表示判定
 // ==========================================
 
-function isTypeFullScreen(
-    type
-) {
+function isTypeFullScreen(type) {
 
-    if (!type) {
-        return false;
-    }
-
-    return type.fullScreen === true;
+    return !!type?.fullScreen;
 }
 
 
-function isDestinationFullScreen(
-    destination
-) {
+function isDestinationFullScreen(destination) {
 
-    if (!destination) {
-        return false;
-    }
-
-    return destination.fullScreen === true;
+    return !!destination?.fullScreen;
 }
 
 
-function isInformationFullScreen(
-    information
-) {
+function isInformationFullScreen(information) {
 
-    if (!information) {
-        return false;
-    }
-
-    return information.fullScreen === true;
+    return !!information?.fullScreen;
 }
 
 
-function isInformation2FullScreen(
-    information
-) {
+function isInformation2FullScreen(information) {
 
     return isInformationFullScreen(
         information
@@ -582,9 +439,7 @@ function isInformation2FullScreen(
 }
 
 
-function isNextFullScreen(
-    next
-) {
+function isNextFullScreen(next) {
 
     return isInformationFullScreen(
         next
@@ -592,20 +447,14 @@ function isNextFullScreen(
 }
 
 
-function isCarNumberFullScreen(
-    carNumber
-) {
+function isCarNumberFullScreen(carNumber) {
 
-    if (!carNumber) {
-        return false;
-    }
-
-    return carNumber.fullScreen === true;
+    return !!carNumber?.fullScreen;
 }
 
 
 // ==========================================
-// JSON画像をmatrixへ描画
+// JSON画像 → matrix
 // ==========================================
 
 function drawImage(
@@ -622,7 +471,6 @@ function drawImage(
         return;
     }
 
-
     const width =
         Number(
             displayData.width
@@ -636,14 +484,11 @@ function drawImage(
     const data =
         displayData.data;
 
-
     if (!Array.isArray(data)) {
         return;
     }
 
-
     let index = 0;
-
 
     for (
         let y = 0;
@@ -663,35 +508,16 @@ function drawImage(
             const targetY =
                 startY + y;
 
-
             if (
-                matrix[targetY] &&
-                matrix[targetY][targetX]
+                matrix[targetY]?.[targetX]
             ) {
 
-                const r =
-                    Number(
-                        data[index]
-                    ) || 0;
-
-                const g =
-                    Number(
-                        data[index + 1]
-                    ) || 0;
-
-                const b =
-                    Number(
-                        data[index + 2]
-                    ) || 0;
-
-
                 matrix[targetY][targetX] = {
-                    r,
-                    g,
-                    b
+                    r: Number(data[index]) || 0,
+                    g: Number(data[index + 1]) || 0,
+                    b: Number(data[index + 2]) || 0
                 };
             }
-
 
             index += 3;
         }
@@ -700,11 +526,10 @@ function drawImage(
 
 
 // ==========================================
-// BIN matrix描画
-// 指定領域に収める
+// BIN → 指定領域
 // ==========================================
 
-function drawBinMatrixAt(
+function drawBinMatrixToArea(
     binMatrix,
     matrix,
     startX,
@@ -720,26 +545,18 @@ function drawBinMatrixAt(
         return;
     }
 
-
     const sourcePixels =
         binMatrix.pixels;
 
-
-    if (
-        !Array.isArray(
-            sourcePixels
-        )
-    ) {
+    if (!Array.isArray(sourcePixels)) {
         return;
     }
-
 
     const sourceHeight =
         sourcePixels.length;
 
     const sourceWidth =
         sourcePixels[0]?.length || 0;
-
 
     if (
         sourceWidth <= 0 ||
@@ -749,109 +566,59 @@ function drawBinMatrixAt(
     }
 
 
-    const scaleX =
-        targetWidth /
-        sourceWidth;
-
-    const scaleY =
-        targetHeight /
-        sourceHeight;
-
-
-    const scale =
-        Math.min(
-            scaleX,
-            scaleY
-        );
-
-
-    const drawWidth =
-        Math.max(
-            1,
-            Math.floor(
-                sourceWidth * scale
-            )
-        );
-
-    const drawHeight =
-        Math.max(
-            1,
-            Math.floor(
-                sourceHeight * scale
-            )
-        );
-
-
-    const offsetX =
-        startX +
-        Math.floor(
-            (
-                targetWidth -
-                drawWidth
-            ) / 2
-        );
-
-
-    const offsetY =
-        startY +
-        Math.floor(
-            (
-                targetHeight -
-                drawHeight
-            ) / 2
-        );
-
-
     for (
         let y = 0;
-        y < drawHeight;
+        y < targetHeight;
         y++
     ) {
 
         const sourceY =
-            Math.floor(
-                y / scale
+            Math.min(
+                sourceHeight - 1,
+                Math.floor(
+                    y *
+                    sourceHeight /
+                    targetHeight
+                )
             );
 
 
         for (
             let x = 0;
-            x < drawWidth;
+            x < targetWidth;
             x++
         ) {
 
             const sourceX =
-                Math.floor(
-                    x / scale
+                Math.min(
+                    sourceWidth - 1,
+                    Math.floor(
+                        x *
+                        sourceWidth /
+                        targetWidth
+                    )
                 );
 
 
             const code =
                 Number(
-                    sourcePixels[
-                        sourceY
-                    ]?.[
-                        sourceX
-                    ]
+                    sourcePixels[sourceY]?.[sourceX]
                 ) || 0;
 
 
             const color =
-                binColor(
-                    code
-                );
+                binColor(code);
 
 
             const targetX =
-                offsetX + x;
+                startX + x;
 
             const targetY =
-                offsetY + y;
+                startY + y;
 
 
             if (
-                matrix[targetY] &&
-                matrix[targetY][targetX]
+                matrix[targetY]?.[targetX]
             ) {
 
                 matrix[targetY][targetX] =
@@ -862,16 +629,36 @@ function drawBinMatrixAt(
 }
 
 
+// 互換用
+function drawBinMatrixAt(
+    binMatrix,
+    matrix,
+    startX,
+    startY,
+    targetWidth,
+    targetHeight
+) {
+
+    drawBinMatrixToArea(
+        binMatrix,
+        matrix,
+        startX,
+        startY,
+        targetWidth,
+        targetHeight
+    );
+}
+
+
 // ==========================================
 // BIN色
-// 7 = 橙
-// 9 = 緑
+//
+// 7  = 橙
+// 9  = 緑
 // 10 = 赤
 // ==========================================
 
-function binColor(
-    code
-) {
+function binColor(code) {
 
     switch (
         Number(code)
@@ -897,8 +684,7 @@ function binColor(
 
 
 // ==========================================
-// テキスト → LED matrix
-// 指定された横幅内に収める
+// テキスト → matrix
 // ==========================================
 
 function drawTextToMatrix(
@@ -918,21 +704,16 @@ function drawTextToMatrix(
         return;
     }
 
-
     const width =
         Math.max(
             1,
-            Math.floor(
-                maxWidth
-            )
+            Math.floor(maxWidth)
         );
 
     const height =
         Math.max(
             1,
-            Math.floor(
-                maxHeight
-            )
+            Math.floor(maxHeight)
         );
 
 
@@ -940,7 +721,6 @@ function drawTextToMatrix(
         document.createElement(
             "canvas"
         );
-
 
     canvas.width =
         width;
@@ -954,22 +734,17 @@ function drawTextToMatrix(
             "2d"
         );
 
-
     if (!tempCtx) {
         return;
     }
 
 
     let fontSize =
-        Math.floor(
-            height * 0.8
-        );
-
-
-    fontSize =
         Math.max(
             8,
-            fontSize
+            Math.floor(
+                height * 0.8
+            )
         );
 
 
@@ -980,8 +755,6 @@ function drawTextToMatrix(
         "left";
 
 
-    // 横幅に収まるまで縮小
-
     while (
         fontSize > 8
     ) {
@@ -991,19 +764,12 @@ function drawTextToMatrix(
             fontSize +
             "px sans-serif";
 
-
-        const measured =
-            tempCtx.measureText(
-                text
-            ).width;
-
-
         if (
-            measured <= width
+            tempCtx.measureText(text).width <=
+            width
         ) {
             break;
         }
-
 
         fontSize--;
     }
@@ -1013,7 +779,6 @@ function drawTextToMatrix(
         "bold " +
         fontSize +
         "px sans-serif";
-
 
     tempCtx.fillStyle =
         "white";
@@ -1056,14 +821,8 @@ function drawTextToMatrix(
                 ) * 4;
 
 
-            const alpha =
-                image.data[
-                    index + 3
-                ];
-
-
             if (
-                alpha <= 80
+                image.data[index + 3] <= 80
             ) {
                 continue;
             }
@@ -1077,8 +836,7 @@ function drawTextToMatrix(
 
 
             if (
-                matrix[targetY] &&
-                matrix[targetY][targetX]
+                matrix[targetY]?.[targetX]
             ) {
 
                 matrix[targetY][targetX] = {
@@ -1089,4 +847,4 @@ function drawTextToMatrix(
             }
         }
     }
-}
+                }
