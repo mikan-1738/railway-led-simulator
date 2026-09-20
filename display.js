@@ -1,1365 +1,712 @@
-function drawCarNumber(carNumber, matrix) {
+// ==========================================
+// Railway LED Simulator
+// display.js
+// 表示データ → LED matrix
+// ==========================================
 
-    if (!carNumber) return;
+const TEXT_COLOR = {
+    r: 255,
+    g: 242,
+    b: 0
+};
 
-    const type = getItem("type", typeId);
-    const dest = getItem("destination", destinationId);
 
-    // 通常のテキスト表示
-    if (dest?.text) {
-        drawTextToMatrix(
-            dest.text,
-            matrix
-        );
-        return;
+// ==========================================
+// 表示データ取得
+// ==========================================
+
+function getDisplayData(item, view = "normal") {
+
+    if (!item) {
+        return null;
     }
 
-    let usedNormal = true;
-    let destinationWidth;
+    return (
+        item.view?.[view]?.[lang] ??
+        item.view?.[view]?.ja ??
+        item.view?.normal?.[lang] ??
+        item.view?.normal?.ja ??
+        null
+    );
+}
 
-    const view = isCarNumberFullScreen(carNumber)
-        ? "full"
-        : "normal";
+
+// ==========================================
+// 表示幅
+// ==========================================
+
+function getItemWidth(item, view = "normal") {
 
     const data =
-        carNumber.view?.[view]?.[lang]
-        ?? carNumber.view?.[view]?.ja
-        ?? carNumber.view?.normal?.[lang]
-        ?? carNumber.view?.normal?.ja;
+        getDisplayData(item, view);
 
-    if (!data) return;
-
-    if (config.hasCarNumberFull) {
-        destinationWidth = 0;
+    if (data?.width) {
+        return Number(data.width);
     }
 
-    if (config.hasCarNumberSmall) {
-        destinationWidth =
-            config.carNumber === "right"
-                ? getDestinationWidth(type, dest, usedNormal)
-                : 0;
-    }
-
-    if (config.hasCarNumberNormal) {
-        destinationWidth =
-            getTypeWidth(type, usedNormal);
-    }
-
-    drawImage(
-        data,
-        destinationWidth,
-        0,
-        matrix
-    );
-}
-
-
-function drawType(type, matrix) {
-
-    let usedNormal = true;
-    let carNumberWidth;
-    let typeLang = lang;
-
-    if (typeMode === "information") {
-        typeLang = "information";
-    }
-
-    const view = isTypeFullScreen(type)
-        ? "full"
-        : "normal";
-
-    let data = null;
-
-    if (config.languageSwitching) {
-
-        data =
-            type.view?.[view]?.[typeLang]
-            ?? type.view?.[view]?.ja
-            ?? type.view?.normal?.[typeLang]
-            ?? type.view?.normal?.ja;
-
-    } else {
-
-        if (nextId != null) {
-
-            data =
-                type.view?.[view]?.[typeLang]
-                ?? type.view?.[view]?.ja
-                ?? type.view?.normal?.[typeLang]
-                ?? type.view?.normal?.ja;
-
-        } else {
-
-            data =
-                type.view?.[view]?.ja_en
-                ?? type.view?.[view]?.[typeLang]
-                ?? type.view?.[view]?.ja
-                ?? type.view?.normal?.ja_en
-                ?? type.view?.normal?.[typeLang]
-                ?? type.view?.normal?.ja;
-
-        }
-    }
-
-    const carNumber =
-        getItem("carNumber", carNumberId);
-
-    if (config.hasCarNumberSmall) {
-        carNumberWidth =
-            getCarNumberWidth(
-                carNumber,
-                usedNormal
-            );
-    } else {
-        carNumberWidth = 0;
-    }
-
-    if (!data) return;
-
-    drawImage(
-        data,
-        carNumberWidth,
-        0,
-        matrix
-    );
-}
-
-
-function drawTypeSmall(type, matrix) {
-
-    let usedNormal = true;
-    let carNumberWidth;
-    let typeLang = lang;
-
-    if (typeMode === "information") {
-        typeLang = "information";
-    }
-
-    const view = isTypeFullScreen(type)
-        ? "full"
-        : "normal";
-
-    let data =
-        type.view?.[view]?.[lang]
-        ?? type.view?.[view]?.ja;
-
-    if (view === "normal") {
-        usedNormal = true;
-    }
-
-    if (!data) {
-
-        data =
-            type.view?.normal?.[lang]
-            ?? type.view?.normal?.ja;
-
-        usedNormal = true;
-    }
-
-    if (!data) return;
-
-    const carNumber =
-        getItem("carNumber", carNumberId);
-
-    if (usedNormal) {
-
-        carNumberWidth =
-            getCarNumberWidth(
-                carNumber,
-                usedNormal
-            );
-
-    } else {
-
-        carNumberWidth = 0;
-
-    }
-
-    drawImage(
-        data,
-        carNumberWidth,
-        0,
-        matrix
-    );
-}
-
-
-function drawDestination(dest, matrix) {
-
-    if (!dest) return;
-
-    // ==========================================
-    // BIN表示
-    // ==========================================
-
-    if (dest.binMatrix) {
-
-        drawBinMatrix(
-            dest.binMatrix,
-            matrix
-        );
-
-        return;
-    }
-
-
-    // ==========================================
-    // 通常の表示
-    // ==========================================
-
-    let usedNormal = false;
-    let typewidth;
-
-    const view =
-        isDestinationFullScreen(dest)
-            ? "full"
-            : "normal";
-
-    let data =
-        dest.view?.[view]?.[lang]
-        ?? dest.view?.[view]?.ja;
-
-    if (view === "normal") {
-        usedNormal = true;
-    }
-
-    if (!data) {
-
-        data =
-            dest.view?.normal?.[lang]
-            ?? dest.view?.normal?.ja;
-
-        usedNormal = true;
-    }
-
-    if (!data) return;
-
-    const type =
-        getItem("type", typeId);
-
-    const carNumber =
-        getItem("carNumber", carNumberId);
-
-    let yOffset;
-
-    if (usedNormal) {
-
-        if (
-            config.destinationPosition ===
-            "normal"
-        ) {
-
-            typewidth =
-                getTypeWidth(
-                    type,
-                    usedNormal
-                );
-        }
-
-        if (
-            config.destinationPosition ===
-            "next"
-        ) {
-
-            typewidth =
-                getCarNumberWidth(
-                    carNumber,
-                    usedNormal
-                );
-        }
-
-    } else {
-
-        typewidth = 0;
-
-    }
-
-    if (
-        config.destinationPosition ===
-        "next"
-    ) {
-
-        yOffset =
-            config.nextPosition;
-
-    } else {
-
-        yOffset = 0;
-
-    }
-
-    drawImage(
-        data,
-        typewidth,
-        yOffset,
-        matrix
-    );
-}
-
-
-function drawDestinationSmall(dest, matrix) {
-
-    if (!dest) return;
-
-    // BINは128×32全体表示なので
-    // small表示ではBINを使わない
-    if (dest.binMatrix) {
-
-        drawBinMatrix(
-            dest.binMatrix,
-            matrix
-        );
-
-        return;
-    }
-
-    let usedSmall = false;
-    let typewidth;
-
-    const view =
-        isDestinationFullScreen(dest)
-            ? "full_small"
-            : "small";
-
-    let data =
-        dest.view?.[view]?.[lang]
-        ?? dest.view?.[view]?.ja;
-
-    if (view === "small") {
-        usedSmall = true;
-    }
-
-    if (!data) {
-
-        data =
-            dest.view?.small?.[lang]
-            ?? dest.view?.small?.ja;
-
-        usedSmall = true;
-    }
-
-    if (!data) return;
-
-    const type =
-        getItem("type", typeId);
-
-    if (usedSmall) {
-
-        typewidth =
-            getTypeWidth(
-                type,
-                usedSmall
-            );
-
-    } else {
-
-        typewidth = 0;
-
-    }
-
-    drawImage(
-        data,
-        typewidth,
-        0,
-        matrix
-    );
-}
-
-
-function drawInformation(info, matrix) {
-
-    let usedNormal = false;
-    let typewidth;
-
-    const view =
-        isInformationFullScreen(info)
-            ? "full"
-            : "normal";
-
-    let data =
-        info.view?.[view]?.[lang]
-        ?? info.view?.[view]?.ja;
-
-    if (view === "normal") {
-        usedNormal = true;
-    }
-
-    if (!data) {
-
-        data =
-            info.view?.normal?.[lang]
-            ?? info.view?.normal?.ja;
-
-        usedNormal = true;
-    }
-
-    if (!data) return;
-
-    const type =
-        getItem("type", typeId);
-
-    if (usedNormal) {
-
-        typewidth =
-            getTypeWidth(
-                type,
-                usedNormal
-            );
-
-    } else {
-
-        typewidth = 0;
-
-    }
-
-    let yOffset;
-
-    const nextPosition =
-        config.nextPosition;
-
-    if (
-        config.informationPosition ===
-        "next"
-    ) {
-
-        const currentInfo =
-            getItem(
-                "information",
-                informationId
-            );
-
-        if (
-            !isInformationFullScreen(
-                currentInfo
-            )
-        ) {
-
-            yOffset = nextPosition;
-
-        } else {
-
-            yOffset = 0;
-
-        }
-
-    } else {
-
-        yOffset = 0;
-
-    }
-
-    drawImage(
-        data,
-        typewidth,
-        yOffset,
-        matrix
-    );
-}
-
-
-function drawInformation2(info, matrix) {
-
-    let usedNormal = false;
-    let typewidth;
-
-    const view =
-        isInformation2FullScreen(info)
-            ? "full"
-            : "normal";
-
-    let data =
-        info.view?.[view]?.[lang]
-        ?? info.view?.[view]?.ja;
-
-    if (view === "normal") {
-        usedNormal = true;
-    }
-
-    if (!data) {
-
-        data =
-            info.view?.normal?.[lang]
-            ?? info.view?.normal?.ja;
-
-        usedNormal = true;
-    }
-
-    if (!data) return;
-
-    const type =
-        getItem("type", typeId);
-
-    if (usedNormal) {
-
-        typewidth =
-            getTypeWidth(
-                type,
-                usedNormal
-            );
-
-    } else {
-
-        typewidth = 0;
-
-    }
-
-    drawImage(
-        data,
-        typewidth,
-        0,
-        matrix
-    );
-}
-
-
-function drawInformationSmall(info, matrix) {
-
-    let usedSmall = false;
-    let typewidth;
-
-    const view =
-        isInformationFullScreen(info)
-            ? "full_small"
-            : "small";
-
-    let data =
-        info.view?.[view]?.[lang]
-        ?? info.view?.[view]?.ja;
-
-    if (view === "small") {
-        usedSmall = true;
-    }
-
-    if (!data) {
-
-        data =
-            info.view?.small?.[lang]
-            ?? info.view?.small?.ja;
-
-        usedSmall = true;
-    }
-
-    if (!data) return;
-
-    const type =
-        getItem("type", typeId);
-
-    if (usedSmall) {
-
-        typewidth =
-            getTypeWidth(
-                type,
-                usedSmall
-            );
-
-    } else {
-
-        typewidth = 0;
-
-    }
-
-    drawImage(
-        data,
-        typewidth,
-        0,
-        matrix
-    );
-}
-
-
-function drawNext(next, matrix) {
-
-    let usedNormal = false;
-    let typewidth;
-
-    const view =
-        isNextFullScreen(next)
-            ? "full"
-            : "normal";
-
-    let data =
-        next?.view?.[view]?.[lang]
-        ?? next?.view?.[view]?.ja;
-
-    if (view === "normal") {
-        usedNormal = true;
-    }
-
-    if (!data) {
-
-        data =
-            next?.view?.normal?.[lang]
-            ?? next?.view?.normal?.ja;
-
-        usedNormal = true;
-    }
-
-    if (!data) return;
-
-    const type =
-        getItem("type", typeId);
-
-    if (usedNormal) {
-
-        typewidth =
-            getTypeWidth(
-                type,
-                usedNormal
-            );
-
-    } else {
-
-        typewidth = 0;
-
-    }
-
-    const nextPosition =
-        config.nextPosition;
-
-    drawImage(
-        data,
-        typewidth,
-        nextPosition,
-        matrix
-    );
-}
-
-
-function getTypeWidth(type, used) {
-
-    if (!type) {
-
-        if (used) {
-
-            if (config.hasCarNumber) {
-
-                const data =
-                    getItem(
-                        "type",
-                        "null_type"
-                    ).view.normal.ja.width;
-
-                const carNumber =
-                    getItem(
-                        "carNumber",
-                        carNumberId
-                    );
-
-                return (
-                    data +
-                    getCarNumberWidth(
-                        carNumber,
-                        true
-                    )
-                );
-
-            } else {
-
-                return (
-                    getItem(
-                        "type",
-                        "null_type"
-                    ).view.normal.ja.width
-                );
-
-            }
-
-        } else {
-
-            return 0;
-
-        }
-    }
-
-    const view =
-        isTypeFullScreen(type)
-            ? "full"
-            : "normal";
-
-    const currentLang =
-        getLangForPart();
-
-    if (config.hasCarNumber) {
-
-        const data =
-            type.view?.[view]?.[currentLang]?.width
-            ?? type.view?.[view]?.ja?.width
-            ?? 0;
-
-        const carNumber =
-            getItem(
-                "carNumber",
-                carNumberId
-            );
-
-        return (
-            data +
-            getCarNumberWidth(
-                carNumber,
-                true
+    if (item?.text) {
+
+        const width =
+            Number(config?.ledWidth) || 128;
+
+        return Math.min(
+            width,
+            Math.max(
+                8,
+                item.text.length * 8
             )
         );
-
-    }
-
-    return (
-        type.view?.[view]?.[currentLang]?.width
-        ?? type.view?.[view]?.ja?.width
-        ?? 0
-    );
-}
-
-
-function getDestinationWidth(
-    type,
-    dest,
-    used
-) {
-
-    let typeData;
-    let destData;
-
-    if (!type) {
-
-        if (used) {
-
-            typeData =
-                getItem(
-                    "type",
-                    "null_type"
-                ).view.normal.ja.width;
-
-        } else {
-
-            typeData = 0;
-
-        }
-    }
-
-    const typeView =
-        isTypeFullScreen(type)
-            ? "full"
-            : "normal";
-
-    const typeLang =
-        getLangForPart();
-
-    let data;
-
-    if (config.hasCarNumber) {
-
-        if (config.carNumber === "left") {
-
-            if (type != null) {
-
-                data =
-                    type.view?.[typeView]?.[typeLang]?.width
-                    ?? type.view?.[typeView]?.ja?.width
-                    ?? 0;
-
-            } else {
-
-                data = typeData;
-
-            }
-
-            const carNumber =
-                getItem(
-                    "carNumber",
-                    carNumberId
-                );
-
-            typeData =
-                data +
-                getCarNumberWidth(
-                    carNumber,
-                    true
-                );
-
-        } else {
-
-            if (type != null) {
-
-                typeData =
-                    type.view?.[typeView]?.[typeLang]?.width
-                    ?? type.view?.[typeView]?.ja?.width
-                    ?? 0;
-
-            }
-
-        }
-
-    } else {
-
-        if (type != null) {
-
-            typeData =
-                type.view?.[typeView]?.[typeLang]?.width
-                ?? type.view?.[typeView]?.ja?.width
-                ?? 0;
-
-        }
-
-    }
-
-    if (!dest) {
-
-        if (used) {
-
-            destData =
-                getItem(
-                    "destination",
-                    "null_destination"
-                ).view.normal.ja.width;
-
-        } else {
-
-            destData = 0;
-
-        }
-    }
-
-    const destView =
-        isDestinationFullScreen(dest)
-            ? "full"
-            : "normal";
-
-    const destLang =
-        getLangForPart();
-
-    if (dest != null) {
-
-        destData =
-            dest.view?.[destView]?.[destLang]?.width
-            ?? dest.view?.[destView]?.ja?.width
-            ?? 0;
-
-    }
-
-    if (typeView === "full") {
-        destData = 0;
-    }
-
-    return (
-        typeData +
-        destData
-    );
-}
-
-
-function getCarNumberWidth(
-    carNumber,
-    used
-) {
-
-    if (!carNumber) {
-
-        if (used) {
-
-            if (config.carNumber === "left") {
-
-                return (
-                    getItem(
-                        "carNumber",
-                        "null_carNumber"
-                    ).view.normal.ja.width
-                );
-
-            } else {
-
-                return 0;
-
-            }
-
-        } else {
-
-            return 0;
-
-        }
-    }
-
-    const view =
-        isCarNumberFullScreen(carNumber)
-            ? "full"
-            : "normal";
-
-    const currentLang =
-        getLangForPart();
-
-    if (config.carNumber === "left") {
-
-        return (
-            carNumber.view?.[view]?.[currentLang]?.width
-            ?? carNumber.view?.[view]?.ja?.width
-            ?? 0
-        );
-
     }
 
     return 0;
 }
 
 
-function isTypeFullScreen(type) {
+// ==========================================
+// 号車
+// ==========================================
 
-    if (!type) return false;
+function drawCarNumber(
+    carNumber,
+    matrix
+) {
 
-    const hasNormal =
-        !!type.view?.normal;
+    if (!carNumber) {
+        return;
+    }
 
-    const hasFull =
-        !!type.view?.full;
+    const data =
+        getDisplayData(carNumber);
 
-    if (
-        hasFull &&
-        !hasNormal
-    ) {
+    if (data) {
 
-        return true;
+        drawImage(
+            data,
+            0,
+            0,
+            matrix
+        );
 
+        return;
+    }
+
+    if (carNumber.text) {
+
+        drawTextToMatrix(
+            carNumber.text,
+            matrix,
+            0,
+            0
+        );
+    }
+}
+
+
+// ==========================================
+// 種別
+// ==========================================
+
+function drawType(
+    type,
+    matrix
+) {
+
+    if (!type) {
+        return;
+    }
+
+    const data =
+        getDisplayData(type);
+
+    if (data) {
+
+        drawImage(
+            data,
+            0,
+            0,
+            matrix
+        );
+
+        return;
+    }
+
+    if (type.text) {
+
+        drawTextToMatrix(
+            type.text,
+            matrix,
+            0,
+            0
+        );
+    }
+}
+
+
+function drawTypeSmall(
+    type,
+    matrix
+) {
+
+    drawType(
+        type,
+        matrix
+    );
+}
+
+
+// ==========================================
+// 行先
+// ==========================================
+
+function drawDestination(
+    destination,
+    matrix
+) {
+
+    if (!destination) {
+        return;
+    }
+
+    // BINデータ
+    if (destination.binMatrix) {
+
+        drawBinMatrix(
+            destination.binMatrix,
+            matrix
+        );
+
+        return;
+    }
+
+    const data =
+        getDisplayData(destination);
+
+    if (data) {
+
+        const type =
+            getItem(
+                "type",
+                typeId
+            );
+
+        const startX =
+            type
+                ? getTypeWidth(
+                    type,
+                    true
+                )
+                : 0;
+
+        drawImage(
+            data,
+            startX,
+            0,
+            matrix
+        );
+
+        return;
+    }
+
+    // 通常テキスト
+    if (destination.text) {
+
+        drawTextToMatrix(
+            destination.text,
+            matrix,
+            0,
+            0
+        );
+    }
+}
+
+
+function drawDestinationSmall(
+    destination,
+    matrix
+) {
+
+    drawDestination(
+        destination,
+        matrix
+    );
+}
+
+
+// ==========================================
+// 案内
+// ==========================================
+
+function drawInformation(
+    information,
+    matrix
+) {
+
+    if (!information) {
+        return;
+    }
+
+    const data =
+        getDisplayData(
+            information
+        );
+
+    if (data) {
+
+        drawImage(
+            data,
+            0,
+            0,
+            matrix
+        );
+
+        return;
+    }
+
+    if (information.text) {
+
+        drawTextToMatrix(
+            information.text,
+            matrix,
+            0,
+            0
+        );
+    }
+}
+
+
+function drawInformationSmall(
+    information,
+    matrix
+) {
+
+    drawInformation(
+        information,
+        matrix
+    );
+}
+
+
+// ==========================================
+// 案内2
+// ==========================================
+
+function drawInformation2(
+    information,
+    matrix
+) {
+
+    drawInformation(
+        information,
+        matrix
+    );
+}
+
+
+// ==========================================
+// 次駅
+// ==========================================
+
+function drawNext(
+    next,
+    matrix
+) {
+
+    if (!next) {
+        return;
+    }
+
+    const data =
+        getDisplayData(
+            next
+        );
+
+    if (data) {
+
+        drawImage(
+            data,
+            0,
+            0,
+            matrix
+        );
+
+        return;
+    }
+
+    if (next.text) {
+
+        drawTextToMatrix(
+            next.text,
+            matrix,
+            0,
+            0
+        );
+    }
+}
+
+
+// ==========================================
+// 種別の幅
+// ==========================================
+
+function getTypeWidth(
+    type,
+    used = false
+) {
+
+    if (!type) {
+        return 0;
+    }
+
+    return getItemWidth(
+        type,
+        "normal"
+    );
+}
+
+
+// ==========================================
+// 号車の幅
+// ==========================================
+
+function getCarNumberWidth(
+    carNumber,
+    used = false
+) {
+
+    if (!carNumber) {
+        return 0;
+    }
+
+    return getItemWidth(
+        carNumber,
+        "normal"
+    );
+}
+
+
+// ==========================================
+// 全面表示判定
+// ==========================================
+
+function isTypeFullScreen(
+    type
+) {
+
+    if (!type) {
+        return false;
     }
 
     if (
-        destinationId === null &&
-        nextId === null
+        type.fullScreen === true
+    ) {
+        return true;
+    }
+
+    return false;
+}
+
+
+function isDestinationFullScreen(
+    destination
+) {
+
+    if (!destination) {
+        return false;
+    }
+
+    if (
+        destination.fullScreen === true
+    ) {
+        return true;
+    }
+
+    return false;
+}
+
+
+function isInformationFullScreen(
+    information
+) {
+
+    if (!information) {
+        return false;
+    }
+
+    if (
+        information.fullScreen === true
+    ) {
+        return true;
+    }
+
+    return false;
+}
+
+
+function isInformation2FullScreen(
+    information
+) {
+
+    return isInformationFullScreen(
+        information
+    );
+}
+
+
+function isNextFullScreen(
+    next
+) {
+
+    return isInformationFullScreen(
+        next
+    );
+}
+
+
+function isCarNumberFullScreen(
+    carNumber
+) {
+
+    if (!carNumber) {
+        return false;
+    }
+
+    if (
+        carNumber.fullScreen === true
+    ) {
+        return true;
+    }
+
+    return false;
+}
+
+
+// ==========================================
+// LED画像データをmatrixへ配置
+// ==========================================
+
+function drawImage(
+    displayData,
+    startX,
+    startY,
+    matrix
+) {
+
+    if (
+        !displayData ||
+        !matrix
+    ) {
+        return;
+    }
+
+    const width =
+        Number(
+            displayData.width
+        ) || 0;
+
+    const height =
+        Number(
+            displayData.height
+        ) || 0;
+
+    const data =
+        displayData.data;
+
+    if (
+        !Array.isArray(data)
+    ) {
+        return;
+    }
+
+    let index = 0;
+
+    for (
+        let y = 0;
+        y < height;
+        y++
     ) {
 
-        if (hasFull) {
-            return true;
+        for (
+            let x = 0;
+            x < width;
+            x++
+        ) {
+
+            const targetX =
+                startX + x;
+
+            const targetY =
+                startY + y;
+
+            if (
+                matrix[targetY] &&
+                matrix[targetY][targetX]
+            ) {
+
+                const r =
+                    Number(
+                        data[index]
+                    ) || 0;
+
+                const g =
+                    Number(
+                        data[index + 1]
+                    ) || 0;
+
+                const b =
+                    Number(
+                        data[index + 2]
+                    ) || 0;
+
+                matrix[targetY][targetX] = {
+                    r,
+                    g,
+                    b
+                };
+            }
+
+            index += 3;
         }
-
     }
-
-    return false;
 }
 
 
-function isCarNumberFullScreen(carNumber) {
-
-    if (!carNumber) return false;
-
-    const hasNormal =
-        !!carNumber.view?.normal;
-
-    const hasFull =
-        !!carNumber.view?.full;
-
-    if (
-        hasFull &&
-        !hasNormal
-    ) {
-
-        return true;
-
-    }
-
-    if (config.carNumberFull) {
-        return true;
-    }
-
-    return false;
-}
-
-
-function isDestinationFullScreen(dest) {
-
-    if (!dest) return false;
-
-    // BINは128×32全体を使う
-    if (dest.binMatrix) {
-        return true;
-    }
-
-    const hasNormal =
-        !!dest.view?.normal;
-
-    const hasFull =
-        !!dest.view?.full;
-
-    if (
-        hasFull &&
-        !hasNormal
-    ) {
-
-        return true;
-
-    }
-
-    if (typeId === null) {
-
-        if (hasFull) {
-            return true;
-        }
-
-    }
-
-    return false;
-}
-
-
-function isInformationFullScreen(info) {
-
-    if (!info) return false;
-
-    const hasNormal =
-        !!info.view?.normal;
-
-    const hasFull =
-        !!info.view?.full;
-
-    if (
-        hasFull &&
-        !hasNormal
-    ) {
-
-        return true;
-
-    }
-
-    if (typeId === null) {
-
-        if (hasFull) {
-            return true;
-        }
-
-    }
-
-    return false;
-}
-
-
-function isInformation2FullScreen(info) {
-
-    if (!info) return false;
-
-    const hasNormal =
-        !!info.view?.normal;
-
-    const hasFull =
-        !!info.view?.full;
-
-    if (
-        hasFull &&
-        !hasNormal
-    ) {
-
-        return true;
-
-    }
-
-    if (typeId === null) {
-        return true;
-    }
-
-    return false;
-}
-
-
-function isNextFullScreen(next) {
-
-    if (!next) return false;
-
-    const hasNormal =
-        !!next.view?.normal;
-
-    const hasFull =
-        !!next.view?.full;
-
-    if (
-        hasFull &&
-        !hasNormal
-    ) {
-
-        return true;
-
-    }
-
-    if (typeId === null) {
-        return true;
-    }
-
-    return false;
-}
-
-
-function getLangForPart() {
-    return lang;
-}
-
-
-function hasEnglishType() {
-
-    const type =
-        getItem("type", typeId);
-
-    if (!type) return;
-
-    return !!type.view?.normal?.en
-        || !!type.view?.full?.en;
-}
-
-
-function hasEnglishDestination() {
-
-    const dest =
-        getItem(
-            "destination",
-            destinationId
-        );
-
-    if (!dest) return;
-
-    // BINには通常の言語データがない
-    if (dest.binMatrix) {
-        return true;
-    }
-
-    return !!dest.view?.normal?.en
-        || !!dest.view?.full?.en
-        || !!dest.view?.small?.en
-        || !!dest.view?.full_small?.en;
-}
-
-
-function hasEnglishInformation() {
-
-    const info =
-        getItem(
-            "information",
-            informationId
-        );
-
-    if (!info) return;
-
-    return !!info.view?.normal?.en
-        || !!info.view?.full?.en
-        || !!info.view?.small?.en;
-}
-
-
-function hasInformationDestination() {
-
-    const dest =
-        getItem(
-            "destination",
-            destinationId
-        );
-
-    if (!dest) return;
-
-    return !!dest.view?.normal?.info
-        || !!dest.view?.full?.info
-        || !!dest.view?.small?.info
-        || !!dest.view?.full_small?.info;
-}
-
-
-function hasEnglishCarNumber() {
-
-    const carNumber =
-        getItem(
-            "carNumber",
-            carNumberId
-        );
-
-    if (!carNumber) return;
-
-    return !!carNumber.view?.normal?.en
-        || !!carNumber.view?.full?.en;
-}
-
-
-function hasTypeInformation() {
-
-    const type =
-        getItem(
-            "type",
-            typeId
-        );
-
-    if (!type) return;
-
-    return !!type.view?.normal?.information
-        || !!type.view?.full?.information;
-}
-
+// ==========================================
+// テキスト → matrix
+// ==========================================
 
 function drawTextToMatrix(
     text,
     matrix,
-    color = {
-        r: 255,
-        g: 0,
-        b: 0
-    }
+    startX = 0,
+    startY = 0
 ) {
 
-    if (!text) return;
+    if (
+        !text ||
+        !matrix ||
+        !config
+    ) {
+        return;
+    }
 
-    const tempCanvas =
-        document.createElement("canvas");
+    const width =
+        Number(
+            config.ledWidth
+        ) || 0;
+
+    const height =
+        Number(
+            config.ledHeight
+        ) || 0;
+
+    if (
+        width <= 0 ||
+        height <= 0
+    ) {
+        return;
+    }
+
+    const canvas =
+        document.createElement(
+            "canvas"
+        );
+
+    canvas.width = width;
+    canvas.height = height;
 
     const tempCtx =
-        tempCanvas.getContext("2d");
+        canvas.getContext(
+            "2d"
+        );
 
     const fontSize =
-        Math.min(
-            config.ledHeight * 0.8,
-            32
+        Math.max(
+            8,
+            Math.floor(
+                height * 0.8
+            )
         );
 
     tempCtx.font =
-        `bold ${fontSize}px sans-serif`;
-
-    tempCtx.textAlign =
-        "center";
+        "bold " +
+        fontSize +
+        "px sans-serif";
 
     tempCtx.textBaseline =
         "middle";
 
-    const metrics =
-        tempCtx.measureText(text);
-
-    tempCanvas.width =
-        Math.ceil(
-            metrics.width + 10
-        );
-
-    tempCanvas.height =
-        config.ledHeight;
-
-    tempCtx.font =
-        `bold ${fontSize}px sans-serif`;
-
     tempCtx.textAlign =
-        "center";
-
-    tempCtx.textBaseline =
-        "middle";
+        "left";
 
     tempCtx.fillStyle =
         "white";
-    // ==========================================
-// JSON → LEDマトリクス描画
-// BINファイルを使わない車両用
-// ==========================================
-
-function drawJsonLedText(text, matrix) {
-
-    if (!text || !matrix) return;
-
-    const width = config.ledWidth;
-    const height = config.ledHeight;
-
-    const canvas = document.createElement("canvas");
-    const ctx = canvas.getContext("2d");
-
-    canvas.width = width;
-    canvas.height = height;
-
-    ctx.clearRect(0, 0, width, height);
-
-    // LED表示用フォント
-    const fontSize = Math.floor(height * 0.8);
-
-    ctx.font = `bold ${fontSize}px sans-serif`;
-    ctx.textAlign = "center";
-    ctx.textBaseline = "middle";
-    ctx.fillStyle = "white";
-
-    ctx.fillText(
-        text,
-        width / 2,
-        height / 2
-    );
-
-    const imageData =
-        ctx.getImageData(
-            0,
-            0,
-            width,
-            height
-        );
-
-    // Canvas → LEDマトリクス
-    for (let y = 0; y < height; y++) {
-
-        for (let x = 0; x < width; x++) {
-
-            const index =
-                (y * width + x) * 4;
-
-            const brightness =
-                imageData.data[index];
-
-            matrix[y][x] =
-                brightness > 80;
-        }
-    }
-}
 
     tempCtx.fillText(
         text,
-        tempCanvas.width / 2,
-        tempCanvas.height / 2
+        0,
+        Math.floor(
+            height / 2
+        )
     );
 
     const image =
-        t// ==========================================
-// JSON → LEDマトリクス描画
-// BINファイルを使わない車両用
-// ==========================================
-
-function drawJsonLedText(text, matrix) {
-
-    if (!text || !matrix) return;
-
-    const width = config.ledWidth;
-    const height = config.ledHeight;
-
-    const canvas = document.createElement("canvas");
-    const ctx = canvas.getContext("2d");
-
-    canvas.width = width;
-    canvas.height = height;
-
-    ctx.clearRect(0, 0, width, height);
-
-    // LED表示用フォント
-    const fontSize = Math.floor(height * 0.8);
-
-    ctx.font = `bold ${fontSize}px sans-serif`;
-    ctx.textAlign = "center";
-    ctx.textBaseline = "middle";
-    ctx.fillStyle = "white";
-
-    ctx.fillText(
-        text,
-        width / 2,
-        height / 2
-    );
-
-    const imageData =
-        ctx.getImageData(
+        tempCtx.getImageData(
             0,
             0,
             width,
             height
         );
 
-    // Canvas → LEDマトリクス
-    for (let y = 0; y < height; y++) {
+    for (
+        let y = 0;
+        y < height;
+        y++
+    ) {
 
-        for (let x = 0; x < width; x++) {
+        for (
+            let x = 0;
+            x < width;
+            x++
+        ) {
 
             const index =
-                (y * width + x) * 4;
+                (
+                    y * width +
+                    x
+                ) * 4;
 
-            const brightness =
-                imageData.data[index];
+            const alpha =
+                image.data[
+                    index + 3
+                ];
 
-            matrix[y][x] =
-                brightness > 80;
+            if (
+                alpha <= 80
+            ) {
+                continue;
+            }
+
+            const targetX =
+                startX + x;
+
+            const targetY =
+                startY + y;
+
+            if (
+                matrix[targetY] &&
+                matrix[targetY][targetX]
+            ) {
+
+                matrix[
+                    targetY
+                ][
+                    targetX
+                ] = {
+                    r: TEXT_COLOR.r,
+                    g: TEXT_COLOR.g,
+                    b: TEXT_COLOR.b
+                };
+            }
         }
     }
 }
