@@ -4,10 +4,42 @@
 // 表示データ → LED matrix
 // ==========================================
 
-const TEXT_COLOR = {
-    r: 255,
-    g: 242,
-    b: 0
+
+// ==========================================
+// 3色LED
+// ==========================================
+
+const LED_COLOR = {
+    orange: {
+        r: 255,
+        g: 105,
+        b: 0
+    },
+
+    red: {
+        r: 255,
+        g: 40,
+        b: 60
+    },
+
+    green: {
+        r: 100,
+        g: 190,
+        b: 40
+    }
+};
+
+
+// ==========================================
+// 都営10-300形 3色LED レイアウト
+// ==========================================
+
+const TOEI_3COLOR_LAYOUT = {
+    typeX: 0,
+    typeWidth: 40,
+
+    destinationX: 40,
+    destinationWidth: 88
 };
 
 
@@ -32,29 +64,87 @@ function getDisplayData(item, view = "normal") {
 
 
 // ==========================================
-// 表示幅
+// 表示色
 // ==========================================
 
-function getItemWidth(item, view = "normal") {
+function getItemColor(item, category = "") {
+
+    if (item?.color) {
+
+        if (
+            typeof item.color === "object" &&
+            item.color.r !== undefined
+        ) {
+            return {
+                r: Number(item.color.r),
+                g: Number(item.color.g),
+                b: Number(item.color.b)
+            };
+        }
+
+        if (
+            LED_COLOR[item.color]
+        ) {
+            return LED_COLOR[item.color];
+        }
+    }
+
+
+    // 種別ごとの3色
+
+    if (category === "type") {
+
+        switch (item?.id) {
+
+            case "express":
+                return LED_COLOR.red;
+
+            case "rapid":
+                return LED_COLOR.green;
+
+            case "section_express":
+                return LED_COLOR.orange;
+
+            case "local":
+            default:
+                return LED_COLOR.orange;
+        }
+    }
+
+
+    // 行き先などの通常表示
+
+    return LED_COLOR.orange;
+}
+
+
+// ==========================================
+// 横幅取得
+// ==========================================
+
+function getItemWidth(
+    item,
+    view = "normal"
+) {
 
     const data =
-        getDisplayData(item, view);
+        getDisplayData(
+            item,
+            view
+        );
 
     if (data?.width) {
-        return Number(data.width);
+
+        return Number(
+            data.width
+        );
     }
 
     if (item?.text) {
 
-        const width =
-            Number(config?.ledWidth) || 128;
-
-        return Math.min(
-            width,
-            Math.max(
-                8,
-                item.text.length * 8
-            )
+        return Math.max(
+            8,
+            item.text.length * 8
         );
     }
 
@@ -76,7 +166,9 @@ function drawCarNumber(
     }
 
     const data =
-        getDisplayData(carNumber);
+        getDisplayData(
+            carNumber
+        );
 
     if (data) {
 
@@ -96,7 +188,13 @@ function drawCarNumber(
             carNumber.text,
             matrix,
             0,
-            0
+            0,
+            128,
+            32,
+            getItemColor(
+                carNumber,
+                "carNumber"
+            )
         );
     }
 }
@@ -115,32 +213,61 @@ function drawType(
         return;
     }
 
+
     const data =
-        getDisplayData(type);
+        getDisplayData(
+            type
+        );
+
+
+    // JSON画像がある場合
 
     if (data) {
 
         drawImage(
             data,
+
+            TOEI_3COLOR_LAYOUT.typeX,
+
             0,
-            0,
+
             matrix
         );
 
         return;
     }
 
+
+    // 通常テキスト
+
     if (type.text) {
 
         drawTextToMatrix(
+
             type.text,
+
             matrix,
+
+            TOEI_3COLOR_LAYOUT.typeX,
+
             0,
-            0
+
+            TOEI_3COLOR_LAYOUT.typeWidth,
+
+            32,
+
+            getItemColor(
+                type,
+                "type"
+            )
         );
     }
 }
 
+
+// ==========================================
+// 種別小
+// ==========================================
 
 function drawTypeSmall(
     type,
@@ -155,7 +282,7 @@ function drawTypeSmall(
 
 
 // ==========================================
-// 行先
+// 行き先
 // ==========================================
 
 function drawDestination(
@@ -167,58 +294,82 @@ function drawDestination(
         return;
     }
 
+
     // BINデータ
+
     if (destination.binMatrix) {
 
-        drawBinMatrix(
+        drawBinMatrixAt(
             destination.binMatrix,
-            matrix
+            matrix,
+
+            TOEI_3COLOR_LAYOUT.destinationX,
+
+            0,
+
+            TOEI_3COLOR_LAYOUT.destinationWidth,
+
+            32
         );
 
         return;
     }
 
+
     const data =
-        getDisplayData(destination);
+        getDisplayData(
+            destination
+        );
+
+
+    // JSON画像
 
     if (data) {
 
-        const type =
-            getItem(
-                "type",
-                typeId
-            );
-
-        const startX =
-            type
-                ? getTypeWidth(
-                    type,
-                    true
-                )
-                : 0;
-
         drawImage(
             data,
-            startX,
+
+            TOEI_3COLOR_LAYOUT.destinationX,
+
             0,
+
             matrix
         );
 
         return;
     }
 
-    // 通常テキスト
+
+    // テキスト
+
     if (destination.text) {
 
         drawTextToMatrix(
+
             destination.text,
+
             matrix,
+
+            TOEI_3COLOR_LAYOUT.destinationX,
+
             0,
-            0
+
+            TOEI_3COLOR_LAYOUT.destinationWidth,
+
+            32,
+
+            getItemColor(
+                destination,
+                "destination"
+            )
         );
     }
 }
 
+
+// ==========================================
+// 行き先小
+// ==========================================
 
 function drawDestinationSmall(
     destination,
@@ -268,7 +419,13 @@ function drawInformation(
             information.text,
             matrix,
             0,
-            0
+            0,
+            128,
+            32,
+            getItemColor(
+                information,
+                "information"
+            )
         );
     }
 }
@@ -285,10 +442,6 @@ function drawInformationSmall(
     );
 }
 
-
-// ==========================================
-// 案内2
-// ==========================================
 
 function drawInformation2(
     information,
@@ -338,14 +491,20 @@ function drawNext(
             next.text,
             matrix,
             0,
-            0
+            0,
+            128,
+            32,
+            getItemColor(
+                next,
+                "next"
+            )
         );
     }
 }
 
 
 // ==========================================
-// 種別の幅
+// 幅計算
 // ==========================================
 
 function getTypeWidth(
@@ -353,20 +512,9 @@ function getTypeWidth(
     used = false
 ) {
 
-    if (!type) {
-        return 0;
-    }
-
-    return getItemWidth(
-        type,
-        "normal"
-    );
+    return TOEI_3COLOR_LAYOUT.typeWidth;
 }
 
-
-// ==========================================
-// 号車の幅
-// ==========================================
 
 function getCarNumberWidth(
     carNumber,
@@ -396,13 +544,7 @@ function isTypeFullScreen(
         return false;
     }
 
-    if (
-        type.fullScreen === true
-    ) {
-        return true;
-    }
-
-    return false;
+    return type.fullScreen === true;
 }
 
 
@@ -414,13 +556,7 @@ function isDestinationFullScreen(
         return false;
     }
 
-    if (
-        destination.fullScreen === true
-    ) {
-        return true;
-    }
-
-    return false;
+    return destination.fullScreen === true;
 }
 
 
@@ -432,13 +568,7 @@ function isInformationFullScreen(
         return false;
     }
 
-    if (
-        information.fullScreen === true
-    ) {
-        return true;
-    }
-
-    return false;
+    return information.fullScreen === true;
 }
 
 
@@ -470,18 +600,12 @@ function isCarNumberFullScreen(
         return false;
     }
 
-    if (
-        carNumber.fullScreen === true
-    ) {
-        return true;
-    }
-
-    return false;
+    return carNumber.fullScreen === true;
 }
 
 
 // ==========================================
-// LED画像データをmatrixへ配置
+// JSON画像をmatrixへ描画
 // ==========================================
 
 function drawImage(
@@ -498,6 +622,7 @@ function drawImage(
         return;
     }
 
+
     const width =
         Number(
             displayData.width
@@ -511,13 +636,14 @@ function drawImage(
     const data =
         displayData.data;
 
-    if (
-        !Array.isArray(data)
-    ) {
+
+    if (!Array.isArray(data)) {
         return;
     }
 
+
     let index = 0;
+
 
     for (
         let y = 0;
@@ -536,6 +662,7 @@ function drawImage(
 
             const targetY =
                 startY + y;
+
 
             if (
                 matrix[targetY] &&
@@ -557,12 +684,14 @@ function drawImage(
                         data[index + 2]
                     ) || 0;
 
+
                 matrix[targetY][targetX] = {
                     r,
                     g,
                     b
                 };
             }
+
 
             index += 3;
         }
@@ -571,66 +700,278 @@ function drawImage(
 
 
 // ==========================================
-// テキスト → matrix
+// BIN matrix描画
+// 指定領域に収める
+// ==========================================
+
+function drawBinMatrixAt(
+    binMatrix,
+    matrix,
+    startX,
+    startY,
+    targetWidth,
+    targetHeight
+) {
+
+    if (
+        !binMatrix ||
+        !matrix
+    ) {
+        return;
+    }
+
+
+    const sourcePixels =
+        binMatrix.pixels;
+
+
+    if (
+        !Array.isArray(
+            sourcePixels
+        )
+    ) {
+        return;
+    }
+
+
+    const sourceHeight =
+        sourcePixels.length;
+
+    const sourceWidth =
+        sourcePixels[0]?.length || 0;
+
+
+    if (
+        sourceWidth <= 0 ||
+        sourceHeight <= 0
+    ) {
+        return;
+    }
+
+
+    const scaleX =
+        targetWidth /
+        sourceWidth;
+
+    const scaleY =
+        targetHeight /
+        sourceHeight;
+
+
+    const scale =
+        Math.min(
+            scaleX,
+            scaleY
+        );
+
+
+    const drawWidth =
+        Math.max(
+            1,
+            Math.floor(
+                sourceWidth * scale
+            )
+        );
+
+    const drawHeight =
+        Math.max(
+            1,
+            Math.floor(
+                sourceHeight * scale
+            )
+        );
+
+
+    const offsetX =
+        startX +
+        Math.floor(
+            (
+                targetWidth -
+                drawWidth
+            ) / 2
+        );
+
+
+    const offsetY =
+        startY +
+        Math.floor(
+            (
+                targetHeight -
+                drawHeight
+            ) / 2
+        );
+
+
+    for (
+        let y = 0;
+        y < drawHeight;
+        y++
+    ) {
+
+        const sourceY =
+            Math.floor(
+                y / scale
+            );
+
+
+        for (
+            let x = 0;
+            x < drawWidth;
+            x++
+        ) {
+
+            const sourceX =
+                Math.floor(
+                    x / scale
+                );
+
+
+            const code =
+                Number(
+                    sourcePixels[
+                        sourceY
+                    ]?.[
+                        sourceX
+                    ]
+                ) || 0;
+
+
+            const color =
+                binColor(
+                    code
+                );
+
+
+            const targetX =
+                offsetX + x;
+
+            const targetY =
+                offsetY + y;
+
+
+            if (
+                matrix[targetY] &&
+                matrix[targetY][targetX]
+            ) {
+
+                matrix[targetY][targetX] =
+                    color;
+            }
+        }
+    }
+}
+
+
+// ==========================================
+// BIN色
+// 7 = 橙
+// 9 = 緑
+// 10 = 赤
+// ==========================================
+
+function binColor(
+    code
+) {
+
+    switch (
+        Number(code)
+    ) {
+
+        case 10:
+            return LED_COLOR.red;
+
+        case 7:
+            return LED_COLOR.orange;
+
+        case 9:
+            return LED_COLOR.green;
+
+        default:
+            return {
+                r: 0,
+                g: 0,
+                b: 0
+            };
+    }
+}
+
+
+// ==========================================
+// テキスト → LED matrix
+// 指定された横幅内に収める
 // ==========================================
 
 function drawTextToMatrix(
     text,
     matrix,
     startX = 0,
-    startY = 0
+    startY = 0,
+    maxWidth = 128,
+    maxHeight = 32,
+    color = LED_COLOR.orange
 ) {
 
     if (
         !text ||
-        !matrix ||
-        !config
+        !matrix
     ) {
         return;
     }
+
 
     const width =
-        Number(
-            config.ledWidth
-        ) || 0;
+        Math.max(
+            1,
+            Math.floor(
+                maxWidth
+            )
+        );
 
     const height =
-        Number(
-            config.ledHeight
-        ) || 0;
+        Math.max(
+            1,
+            Math.floor(
+                maxHeight
+            )
+        );
 
-    if (
-        width <= 0 ||
-        height <= 0
-    ) {
-        return;
-    }
 
     const canvas =
         document.createElement(
             "canvas"
         );
 
-    canvas.width = width;
-    canvas.height = height;
+
+    canvas.width =
+        width;
+
+    canvas.height =
+        height;
+
 
     const tempCtx =
         canvas.getContext(
             "2d"
         );
 
-    const fontSize =
-        Math.max(
-            8,
-            Math.floor(
-                height * 0.8
-            )
+
+    if (!tempCtx) {
+        return;
+    }
+
+
+    let fontSize =
+        Math.floor(
+            height * 0.8
         );
 
-    tempCtx.font =
-        "bold " +
-        fontSize +
-        "px sans-serif";
+
+    fontSize =
+        Math.max(
+            8,
+            fontSize
+        );
+
 
     tempCtx.textBaseline =
         "middle";
@@ -638,8 +979,45 @@ function drawTextToMatrix(
     tempCtx.textAlign =
         "left";
 
+
+    // 横幅に収まるまで縮小
+
+    while (
+        fontSize > 8
+    ) {
+
+        tempCtx.font =
+            "bold " +
+            fontSize +
+            "px sans-serif";
+
+
+        const measured =
+            tempCtx.measureText(
+                text
+            ).width;
+
+
+        if (
+            measured <= width
+        ) {
+            break;
+        }
+
+
+        fontSize--;
+    }
+
+
+    tempCtx.font =
+        "bold " +
+        fontSize +
+        "px sans-serif";
+
+
     tempCtx.fillStyle =
         "white";
+
 
     tempCtx.fillText(
         text,
@@ -649,6 +1027,7 @@ function drawTextToMatrix(
         )
     );
 
+
     const image =
         tempCtx.getImageData(
             0,
@@ -656,6 +1035,7 @@ function drawTextToMatrix(
             width,
             height
         );
+
 
     for (
         let y = 0;
@@ -675,10 +1055,12 @@ function drawTextToMatrix(
                     x
                 ) * 4;
 
+
             const alpha =
                 image.data[
                     index + 3
                 ];
+
 
             if (
                 alpha <= 80
@@ -686,27 +1068,25 @@ function drawTextToMatrix(
                 continue;
             }
 
+
             const targetX =
                 startX + x;
 
             const targetY =
                 startY + y;
 
+
             if (
                 matrix[targetY] &&
                 matrix[targetY][targetX]
             ) {
 
-                matrix[
-                    targetY
-                ][
-                    targetX
-                ] = {
-                    r: TEXT_COLOR.r,
-                    g: TEXT_COLOR.g,
-                    b: TEXT_COLOR.b
+                matrix[targetY][targetX] = {
+                    r: color.r,
+                    g: color.g,
+                    b: color.b
                 };
             }
         }
     }
-        }
+}
