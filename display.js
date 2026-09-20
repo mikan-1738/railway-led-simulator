@@ -709,4 +709,4 @@ function drawTextToMatrix(
             }
         }
     }
-}
+        }
