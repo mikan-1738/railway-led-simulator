@@ -278,4 +278,4 @@ function drawImage(displayData, startX, startY, matrix) {
 function clearMatrix() {
     ctx.fillStyle = "rgb(0,0,0)";
     ctx.fillRect(0, 0, led.width, led.height);
-                }
+                   }
