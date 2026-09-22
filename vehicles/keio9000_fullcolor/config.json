@@ -1,20 +1,54 @@
 {
-  "ledWidth": 128,
-  "ledHeight": 32,
-  "ledSize": 6,
-  "ledGap": 1,
-  "sceneInterval": 3000,
+    "name": "京王9000系（フルカラーLED）",
 
-  "hasType": true,
-  "hasDestination": true,
-  "hasInformation": false,
-  "hasInformation2": false,
-  "hasNext": false,
-  "hasCarNumber": true,
+    "explanation": "",
 
-  "hasCarNumberSmall": false,
-  "hasCarNumberFull": false,
-  "hasCarNumberNormal": true,
+    "hasType": true,
+    "hasDestination": true,
+    "hasInformation": false,
+    "hasInformation2": false,
+    "hasLine": false,
+    "hasNext": false,
+    "hasScroll": false,
+    "scrollLabel": "",
+    "hasCarNumber": true,
+    "hasCarNumberFull": false,
+    "hasCarNumberSmall": false,
+    "hasCarNumberNormal": true,
+    "carNumber": null,
+    "informationPosition": "normal",
+    "destinationPosition": "normal",
 
-  "languageSwitching": true
+    "destinationDistinction": false,
+    "nextModeDistinction": false,
+    "typeDistinction": false,
+    "informationDistinction": false,
+    "information2Distinction": false,
+    "lineDistinction": false,
+    "carNumberDistinction": false,
+
+    "typeSwitching": false,
+
+    "sceneInterval": 3000,
+    "languageSwitching": true,
+    "carNumberLanguageSwitching": false,
+    "destinationLanguageSwitching": false,
+    "informationLanguageSwitching": false,
+    "ledWidth": 128,
+    "ledHeight": 32,
+    "pixelSize": 8.5,
+    "ledSize": 6,
+    "ledGap": 1,
+
+    "enAhead": false,
+    "informationAhead": false,
+
+    "setSwitchingTime": false,
+
+    "next_normal": false,
+    "nextPosition": 16,
+
+    "hasReferenceSite": false,
+
+    "ledShape": "circle"
 }
