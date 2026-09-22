@@ -4,8 +4,7 @@
       "id": "type",
       "items": [
         { "id": "local", "name": "各停", "text": "各停" },
-        { "id": "express", "name": "急行", "text": "急行" },
-        { "id": "rapid", "name": "快速", "text": "快速" }
+        { "id": "express", "name": "急行", "text": "急行" }
       ]
     },
     {
