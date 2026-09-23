@@ -266,11 +266,27 @@ function buildSceneList() {
                     next: true
                 });
             } else {
-                sceneList.push({
-                    lang: "en",
-                    information: "destination",
-                    next: false
-                });
+                if (!config.destinationLanguageSwitching) {
+                    if (informationId === null) {
+                        sceneList.push({
+                            lang: "en",
+                            information: "destination",
+                            next: false
+                        });
+                    } else {
+                        sceneList.push({
+                            lang: "en",
+                            information: "information",
+                            next: false
+                        });
+                    }
+                } else {
+                    sceneList.push({
+                        lang: "en",
+                        information: "destination",
+                        next: false
+                    });
+                }
             }
         }
         if (typeId === null) {
@@ -355,37 +371,69 @@ function buildSceneList() {
         if (config.informationPosition === "normal") {
             if (scrollId === null) {
                 if (nextId != null) {
-                    sceneList.push({
-                        lang: "ja",
-                        information: "information",
-                        next: true
-                    });
-                    if (config.informationLanguageSwitching) {
+                    if (information2Id === null) {
                         sceneList.push({
-                            lang: "en",
+                            lang: "ja",
                             information: "information",
                             next: true
                         });
-                    }
-                } else {
-                    sceneList.push({
-                        lang: "ja",
-                        information: "information",
-                        next: false
-                    });
-                    if (config.informationLanguageSwitching) {
-                        if (hasEnglishInformation()) {
+                        if (config.informationLanguageSwitching) {
                             sceneList.push({
                                 lang: "en",
                                 information: "information",
-                                next: false
+                                next: true
                             });
+                        }
+                    } else {
+                        if (config.hasInformationCombined) {
+                            sceneList.push({
+                                lang: "ja",
+                                information: "information_information2",
+                                next: false
+                            })
+                            if (config.informationLanguageSwitching) {
+                                sceneList.push({
+                                    lang: "en",
+                                    information: "information_information2",
+                                    next: false
+                                });
+                            }
+                        } else {
+                            sceneList.push({
+                                lang: "ja",
+                                information: "information",
+                                next: true
+                            });
+                            if (config.informationLanguageSwitching) {
+                                sceneList.push({
+                                    lang: "en",
+                                    information: "information",
+                                    next: true
+                                });
+                            }
+                        }
+                    }
+                } else {
+                    if (!config.languageSwitching || config.languageSwitching && config.destinationLanguageSwitching) {
+                        sceneList.push({
+                            lang: "ja",
+                            information: "information",
+                            next: false
+                        });
+                        if (config.informationLanguageSwitching) {
+                            if (hasEnglishInformation()) {
+                                sceneList.push({
+                                    lang: "en",
+                                    information: "information",
+                                    next: false
+                                });
+                            }
                         }
                     }
                 }
             } else {
                 const info = getItem ("information", informationId);
-                const hasInformationSmall1 = !!info.view.small1
+                const hasInformationSmall1 = !!info.view.small1 || !!info.view.full_small1;
                 if (!hasInformationSmall1) {
                     sceneList.push({
                         lang: "ja",
@@ -428,11 +476,21 @@ function buildSceneList() {
 
     if (information2Id != null) {
         if (nextId != null) {
-            sceneList.push({
-                lang: "ja",
-                information: "information2",
-                next: true
-            });
+            if (informationId != null) {
+                if (!config.hasInformationCombined) {
+                    sceneList.push({
+                        lang: "ja",
+                        information: "information2",
+                        next: true
+                    });
+                }
+            } else {
+                sceneList.push({
+                    lang: "ja",
+                    information: "information2",
+                    next: true
+                });
+            }
         } else {
             sceneList.push({
                 lang: "ja",
@@ -586,100 +644,4 @@ function initSimulator() {
     document.getElementById("informationButtons").innerHTML = "";
     document.getElementById("information2Buttons").innerHTML = "";
     document.getElementById("lineButtons").innerHTML = "";
-    document.getElementById("nextModeButtons").innerHTML = "";
-    document.getElementById("carNumberButtons").innerHTML = "";
-    const typeLabel = document.getElementById("type");
-    typeLabel.textContent = "種別:なし"
-    const destinationLabel = document.getElementById("destination");
-    destinationLabel.textContent = "行先:なし"
-    const informationLabel = document.getElementById("information");
-    informationLabel.textContent = "案内:なし"
-    const information2Label = document.getElementById("information2");
-    information2Label.textContent = "案内2:なし"
-    const lineLabel = document.getElementById("line");
-    lineLabel.textContent = "路線名:なし"
-    const nextLabel = document.getElementById("nextMode");
-    nextLabel.textContent = "次駅:なし"
-    const carNumberLabel = document.getElementById("carNumber");
-    carNumberLabel.textContent = "号車:なし"
-
-    typeId = null;
-    destinationId = null;
-    informationId = null;
-    information2Id = null;
-    lineId = null;
-    carNumberId = null;
-    nextId = null;
-    sceneList = [];
-    lang = "ja";
-    scene = 0;
-    selectedVehicle = null;
-    displayMode = "normal";
-    informationMode = "destination";
-    langIndex = 0;
-    languageSwitching = null;
-}
-
-window.addEventListener("resize", () => {
-    requestResizeRender();
-});
-
-let resizeRequest = null;
-
-function requestResizeRender() {
-    if (resizeRequest) return;
-
-    resizeRequest = requestAnimationFrame(() => {
-        resizeLed();
-        const now = performance.now();
-        if (now - lastRender > 16) {
-            ctx.clearRect(0,0,sizeLed.width,sizeLed.height);
-            ctx.drawImage(cacheCanvas,0,0);
-            lastRender = now;
-        }
-        resizeRequest = null;
-    });
-}
-
-const sidebar = document.getElementById("sidebar");
-const resizer = document.getElementById("resizer");
-
-let dragging = false;
-let startX;
-let startWidth;
-
-resizer.addEventListener("mousedown", (e) => {
-    dragging = true;
-    startX = e.clientX;
-    startWidth = sidebar.offsetWidth;
-});
-
-let lastRender = 0;
-
-document.addEventListener("mousemove", (e) => {
-    if (!dragging) return;
-
-    const dx = e.clientX - startX;
-    let width = startWidth + dx;
-
-    width = Math.max(260, Math.min(width, 1700));
-
-    sidebar.style.width = width + "px";
-
-    resizeLed();
-    resizeButtonText();
-    const now = performance.now();
-    if (now - lastRender > 16) {
-        ctx.clearRect(0,0,sizeLed.width,sizeLed.height);
-        ctx.drawImage(cacheCanvas,0,0);
-        lastRender = now;
-    }
-});
-
-document.addEventListener("mouseup", () => {
-    dragging = false;
-});
-
-document.querySelectorAll("button").forEach(btn => {
-    btn.addEventListener("touchstart", () => {
-        btn.classList.a
+    document.getElementById("nextModeButtons").
