@@ -1,9 +1,83 @@
 {
-  "id": "narita_airport",
-  "name": "成田空港",
-  "text": "成田空港",
-  "alternate": {
-    "text": "京成本線経由",
-    "duration": 3000
-  }
+  "categories": [
+    {
+      "id": "type",
+      "items": [
+        {
+          "id": "local",
+          "name": "普通",
+          "text": "普通"
+        },
+        {
+          "id": "limited_express",
+          "name": "特急",
+          "text": "特急"
+        },
+        {
+          "id": "rapid_limited_express",
+          "name": "快速特急",
+          "text": "快速特急"
+        }
+      ]
+    },
+    {
+      "id": "destination",
+      "items": [
+        {
+          "id": "narita_airport",
+          "name": "成田空港",
+          "text": "成田空港",
+          "alternate": {
+            "text": "京成本線経由",
+            "duration": 3000
+          }
+        },
+        {
+          "id": "ueno",
+          "name": "上野",
+          "text": "上野"
+        },
+        {
+          "id": "haneda_airport",
+          "name": "羽田空港",
+          "text": "羽田空港"
+        },
+        {
+          "id": "aoto",
+          "name": "青砥",
+          "text": "青砥"
+        }
+      ]
+    },
+    {
+      "id": "information",
+      "items": [
+        {
+          "id": "none",
+          "name": "",
+          "text": ""
+        }
+      ]
+    },
+    {
+      "id": "next",
+      "items": [
+        {
+          "id": "none",
+          "name": "",
+          "text": ""
+        }
+      ]
+    },
+    {
+      "id": "carNumber",
+      "items": [
+        {
+          "id": "none",
+          "name": "",
+          "text": ""
+        }
+      ]
+    }
+  ]
 }
