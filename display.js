@@ -296,7 +296,7 @@ function drawInformation2(info2, matrix) {
     }
     let yOffset;
     const nextPosition = config.nextPosition;
-    if (config.informationPosition === "next") {
+    if (config.information2Position === "next") {
         const info = getItem("information2", information2Id);
         if (!isInformation2FullScreen(info)) {
             yOffset = nextPosition;
@@ -354,10 +354,14 @@ function drawInformationSmall(info, matrix) {
         ? "full_small"
         : "small";
     if (informationMode === "information_small1") {
-        view = "small1"
+        view = isInformationFullScreen(info)
+            ? "full_small1"
+            : "small1";
     }
     if (informationMode === "information_small2") {
-        view = "small2"
+        view = isInformationFullScreen(info)
+            ? "full_small2"
+            : "small2";
     }
 
     let data =
@@ -384,14 +388,67 @@ function drawInformationSmall(info, matrix) {
     drawImage(data, typewidth, 0, matrix);
 }
 
+function drawInformation2Small(info2, matrix) {
+
+    let usedSmall = false;
+    let typewidth;
+
+    let view = isInformationFullScreen(info2)
+        ? "full_small"
+        : "small";
+    if (informationMode === "information2_small1") {
+        view = isInformationFullScreen(info2)
+            ? "full_small1"
+            : "small1";
+    }
+    if (informationMode === "information2_small2") {
+        view = isInformationFullScreen(info2)
+            ? "full_small2"
+            : "small2";
+    }
+
+    let data =
+        info2.view?.[view]?.[lang]
+        ?? info2.view?.[view]?.ja;
+        if (view === "small" || view === "small1" || view === "small2") {
+            usedSmall = true;
+        }
+
+    if (!data) {
+        data =
+            info2.view?.small?.[lang]
+            ?? info2.view?.small?.ja;
+        usedSmall = true;
+    }
+
+    if (!data) return;
+    const type = getItem("type", typeId)
+    if (usedSmall) {
+        typewidth = getTypeWidth(type, usedSmall);
+    } else {
+        typewidth = 0;
+    }
+    let yOffset;
+    const nextPosition = config.nextPosition;
+    if (informationMode === "information_information2") {
+        yOffset = nextPosition;
+    } else {
+        yOffset = 0;
+    }
+    drawImage(data, typewidth, yOffset, matrix);
+}
+
 function drawNext(next, matrix) {
 
     let usedNormal = false;
     let typewidth;
 
-    const view = isNextFullScreen(next)
+    let view = isNextFullScreen(next)
         ? "full"
         : "normal"
+    if (config.hasNextFullScreen) {
+        view = "full"
+    }
 
     let data =
         next?.view?.[view]?.[lang]
@@ -643,7 +700,7 @@ function isInformationFullScreen(info) {
     if(!info) return false;
 
     const hasNormal = !!info.view.normal;
-    const hasFull = !!info.view.full;
+    const hasFull = !!info.view.full || !!info.view.full_small || !!info.view.full_small1 || !!info.view.full_small2;
 
     if(hasFull && !hasNormal){
         return true;
@@ -837,87 +894,4 @@ function createScrollMatrix() {
         const charX = charIndex * 16;
 
         for (let py = 0; py < 16; py++) {
-            for (let px = 0; px < 16; px++) {
-
-                if (!charMatrix[py][px]) {
-                    continue;
-                }
-
-                const x = charX + px;
-                const y = py;
-
-                drawLEDCircle(scrollTextCtx, x, y, {
-                    r: 255,
-                    g: 242,
-                    b: 0
-                });
-            }
-        }
-    }
-}
-
-function drawScroll() {
-    if (!typeId) {
-        stopScroll();
-        return;
-    }
-
-    const type = getItem("type", typeId);
-
-    if (
-        !scrollCheck.checked ||
-        clickStartScrollBtn === false ||
-        scrollId === null ||
-        isTypeFullScreen(type) === true
-    ) {
-        stopScroll();
-        return;
-    }
-
-    const areaPixelLeft = areaLeft * pitch;
-    const areaPixelTop = areaTop * pitch;
-    const areaPixelWidth = (areaRight - areaLeft) * pitch;
-    const areaPixelHeight = (areaBottom - areaTop) * pitch;
-
-    /*
-     * スクロール領域だけ通常表示に戻す
-     */
-    ctx.drawImage(
-        cacheCanvas,
-
-        areaPixelLeft,
-        areaPixelTop,
-        areaPixelWidth,
-        areaPixelHeight,
-
-        areaPixelLeft,
-        areaPixelTop,
-        areaPixelWidth,
-        areaPixelHeight
-    );
-
-    /*
-     * スクロール領域から
-     * はみ出さないようにする
-     */
-    ctx.save();
-
-    ctx.beginPath();
-
-    ctx.rect(
-        areaPixelLeft,
-        areaPixelTop,
-        areaPixelWidth,
-        areaPixelHeight
-    );
-
-    ctx.clip();
-
-    /*
-     * 完成済みの文字画像を表示
-     *
-     * scrollPixelX は実際のピクセル位置
-     */
-    ctx.drawImage(
-        scrollTextCanvas,
    
