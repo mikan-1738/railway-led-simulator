@@ -433,6 +433,7 @@ input[type="number"]::-webkit-outer-spin-button {
     font-family: "KH Kagurazaka 16";
     src: url("fonts/KH-Dot-Kagurazaka-16.ttf") format("truetype");
 }
+
 @media (max-width: 768px) {
 
     html,
@@ -441,7 +442,6 @@ input[type="number"]::-webkit-outer-spin-button {
         margin: 0;
     }
 
-    /* 通常の車両選択画面ではスクロール可能 */
     body {
         overflow-y: auto;
         overflow-x: hidden;
@@ -470,10 +470,6 @@ input[type="number"]::-webkit-outer-spin-button {
         flex-direction: column;
     }
 
-    /* =========================
-       シミュレーター画面のみ固定
-       ========================= */
-
     body.simulatorMode {
         overflow: hidden;
     }
@@ -483,7 +479,6 @@ input[type="number"]::-webkit-outer-spin-button {
         min-height: 0;
     }
 
-    /* mainを上 */
     body.simulatorMode main {
         order: 1;
 
@@ -496,12 +491,10 @@ input[type="number"]::-webkit-outer-spin-button {
         justify-content: flex-start;
     }
 
-    /* resizerはスマホでは不要 */
     body.simulatorMode #resizer {
         display: none;
     }
 
-    /* asideを下 */
     body.simulatorMode aside {
         order: 2;
 
@@ -513,10 +506,6 @@ input[type="number"]::-webkit-outer-spin-button {
         overflow-y: auto;
         overflow-x: hidden;
     }
-
-    /* =========================
-       その他のスマホ用設定
-       ========================= */
 
     .ledFrame {
         margin: 10px;
