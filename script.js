@@ -192,6 +192,18 @@ function buildSceneList() {
     sceneList = [];
     const type = getItem("type", typeId);
 
+    if (information2Id != null) {
+        if (config.information2Position === "next") {
+            if (config.information2Ahead) {
+                sceneList.push({
+                    lang: "ja",
+                    information: "information2_next",
+                    next: false
+                });
+            }
+        }
+    }
+
     if (informationId != null) {
         if (config.informationPosition === "next") {
             if (config.informationAhead) {
@@ -371,34 +383,8 @@ function buildSceneList() {
         if (config.informationPosition === "normal") {
             if (scrollId === null) {
                 if (nextId != null) {
-                    if (information2Id === null) {
-                        sceneList.push({
-                            lang: "ja",
-                            information: "information",
-                            next: true
-                        });
-                        if (config.informationLanguageSwitching) {
-                            sceneList.push({
-                                lang: "en",
-                                information: "information",
-                                next: true
-                            });
-                        }
-                    } else {
-                        if (config.hasInformationCombined) {
-                            sceneList.push({
-                                lang: "ja",
-                                information: "information_information2",
-                                next: false
-                            })
-                            if (config.informationLanguageSwitching) {
-                                sceneList.push({
-                                    lang: "en",
-                                    information: "information_information2",
-                                    next: false
-                                });
-                            }
-                        } else {
+                    if (!config.information_ja_en) {
+                        if (information2Id === null) {
                             sceneList.push({
                                 lang: "ja",
                                 information: "information",
@@ -411,24 +397,83 @@ function buildSceneList() {
                                     next: true
                                 });
                             }
+                        } else {
+                            if (config.hasInformationCombined) {
+                                sceneList.push({
+                                    lang: "ja",
+                                    information: "information_information2",
+                                    next: false
+                                })
+                                if (config.informationLanguageSwitching) {
+                                    sceneList.push({
+                                        lang: "en",
+                                        information: "information_information2",
+                                        next: false
+                                    });
+                                }
+                            } else {
+                                sceneList.push({
+                                    lang: "ja",
+                                    information: "information",
+                                    next: true
+                                });
+                                if (config.informationLanguageSwitching) {
+                                    sceneList.push({
+                                        lang: "en",
+                                        information: "information",
+                                        next: true
+                                    });
+                                }
+                            }
                         }
+                    } else {
+                        sceneList.push({
+                            lang: "ja_en",
+                            information: "information",
+                            next: true
+                        });
                     }
                 } else {
-                    if (!config.languageSwitching || config.languageSwitching && config.destinationLanguageSwitching) {
-                        sceneList.push({
-                            lang: "ja",
-                            information: "information",
-                            next: false
-                        });
-                        if (config.informationLanguageSwitching) {
-                            if (hasEnglishInformation()) {
+                    if (!config.information_ja_en) {
+                        if (hasEnglishType()) {
+                            if (!config.languageSwitching || config.languageSwitching && config.destinationLanguageSwitching) {
                                 sceneList.push({
-                                    lang: "en",
+                                    lang: "ja",
                                     information: "information",
                                     next: false
                                 });
+                                if (config.informationLanguageSwitching) {
+                                    if (hasEnglishInformation()) {
+                                        sceneList.push({
+                                            lang: "en",
+                                            information: "information",
+                                            next: false
+                                        });
+                                    }
+                                }
+                            }
+                        } else {
+                            sceneList.push({
+                                lang: "ja",
+                                information: "information",
+                                next: false
+                            });
+                            if (config.informationLanguageSwitching) {
+                                if (hasEnglishInformation()) {
+                                    sceneList.push({
+                                        lang: "en",
+                                        information: "information",
+                                        next: false
+                                    });
+                                }
                             }
                         }
+                    } else {
+                        sceneList.push({
+                            lang: "ja_en",
+                            information: "information",
+                            next: false
+                        });
                     }
                 }
             } else {
@@ -475,9 +520,17 @@ function buildSceneList() {
     }
 
     if (information2Id != null) {
-        if (nextId != null) {
-            if (informationId != null) {
-                if (!config.hasInformationCombined) {
+        if (!config.information2Ahead) {
+            if (nextId != null) {
+                if (informationId != null) {
+                    if (!config.hasInformationCombined) {
+                        sceneList.push({
+                            lang: "ja",
+                            information: "information2",
+                            next: true
+                        });
+                    }
+                } else {
                     sceneList.push({
                         lang: "ja",
                         information: "information2",
@@ -488,15 +541,9 @@ function buildSceneList() {
                 sceneList.push({
                     lang: "ja",
                     information: "information2",
-                    next: true
+                    next: false
                 });
             }
-        } else {
-            sceneList.push({
-                lang: "ja",
-                information: "information2",
-                next: false
-            });
         }
     }
 
@@ -560,88 +607,4 @@ function buildSceneList() {
                         lang: "ja",
                         information: "carNumber_destination",
                         next: false
-                    });
-                }
-                if (hasEnglishCarNumber()) {
-                    if (nextId != null) {
-                        sceneList.push({
-                            lang: "en",
-                            information: "carNumber_destination",
-                            next: true
-                        });
-                    } else {
-                        sceneList.push({
-                            lang: "en",
-                            information: "carNumber_destination",
-                            next: false
-                        });
-                    }
-                }
-            }
-        }
-    }
-
-    if (config.next_normal) {
-        if (nextId != null) {
-            sceneList.push({
-                lang: "ja",
-                information: "destination",
-                next: false
-            });
-            sceneList.push({
-                lang: "en",
-                information: "destination",
-                next: false
-            });
-        }
-    }
-
-}
-
-function applyScene() {
-    lang = sceneList[scene].lang;
-    informationMode = sceneList[scene].information;
-    showNext = sceneList[scene].next;
-}
-
-let typeTimer = null;
-
-function buildTypeSceneList() {
-    typeSceneList = [];
-    typeSceneList.push({
-        typeInfo: null
-    });
-    if (hasTypeInformation()) {
-        typeSceneList.push({
-            typeInfo: "information"
-        });
-    }
-}
-
-function applyTypeScene() {
-    typeMode = typeSceneList[typeScene].typeInfo;
-}
-
-function initSimulator() {
-
-    if (renderTimer !== null) {
-        clearInterval(renderTimer);
-        renderTimer = null;
-    }
-
-    if (typeTimer !== null) {
-        clearInterval(typeTimer);
-        typeTimer = null;
-    }
-
-    if (config) {
-        clearMatrix();
-        drawMatrix(createEmptyMatrix());
-    }
-
-    document.getElementById("typeButtons").innerHTML = "";
-    document.getElementById("destinationButtons").innerHTML = "";
-    document.getElementById("informationButtons").innerHTML = "";
-    document.getElementById("information2Buttons").innerHTML = "";
-    document.getElementById("lineButtons").innerHTML = "";
-    document.getElementById("nextModeButtons").
+   
