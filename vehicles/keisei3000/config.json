@@ -1,23 +1,28 @@
 {
-    "name": "京成3000形",
+    "name": "京成3000形・北総7500形など",
 
-    "explanation": "",
+    "explanation": "a",
 
     "hasType": true,
     "hasDestination": true,
     "hasInformation": true,
     "hasInformation2": false,
     "hasLine": false,
-    "hasNext": true,
+    "hasNext": false,
     "hasScroll": false,
-    "scrollLabel": "",
-    "hasCarNumber": true,
+    "scrollLabel": null,
+    "hasCarNumber": false,
     "hasCarNumberFull": false,
     "hasCarNumberSmall": false,
     "hasCarNumberNormal": false,
     "carNumber": null,
     "informationPosition": "normal",
     "destinationPosition": "normal",
+    "hasNextFullScreen": false,
+    "hasScrollFullScreen": false,
+    "information_ja_en": false,
+
+    "hasInformationCombined": false,
 
     "destinationDistinction": false,
     "nextModeDistinction": false,
@@ -29,16 +34,16 @@
 
     "typeSwitching": false,
 
-    "sceneInterval": 1000,
+    "sceneInterval": 3000,
     "languageSwitching": false,
     "carNumberLanguageSwitching": false,
     "destinationLanguageSwitching": false,
     "informationLanguageSwitching": false,
-    "ledWidth": 128,
+    "ledWidth": 144,
     "ledHeight": 32,
     "pixelSize": 8.5,
-    "ledSize": 6,
-    "ledGap": 1,
+    "ledSize": 6.5,
+    "ledGap": 2,
 
     "enAhead": false,
     "informationAhead": false,
@@ -48,7 +53,7 @@
     "next_normal": false,
     "nextPosition": 16,
 
-    "hasReferenceSite": false,
+    "hasReferenceSite": true,
 
     "ledShape": "circle"
 }
