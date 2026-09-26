@@ -92,6 +92,14 @@ function createDisplayMatrix () {
                         drawInformation(info, matrix);
                     }
                 }
+                if(informationMode === "information2_next") {
+                    if (destinationId != null) {
+                        drawDestinationSmall(dest,matrix);
+                    }
+                    if (informationId != null) {
+                        drawInformation2(info2, matrix);
+                    }
+                }
                 if(informationMode === "carNumber_destination") {
                     if (carNumberId != null) {
                         drawCarNumber(carNumber, matrix);
@@ -128,6 +136,14 @@ function createDisplayMatrix () {
                         drawInformation2(info2, matrix);
                     }
                 }
+                if(informationMode === "information_information2") {
+                    if (informationId != null) {
+                        drawInformationSmall(info, matrix);
+                    }
+                    if (information2Id != null) {
+                        drawInformation2Small(info2, matrix);
+                    }
+                }
                 if(informationMode === "line") {
                     if (lineId != null) {
                         drawLine(line,matrix);
@@ -144,6 +160,14 @@ function createDisplayMatrix () {
                     }
                     if (informationId != null) {
                         drawInformation(info, matrix);
+                    }
+                }
+                if(informationMode === "information2_next") {
+                    if (destinationId != null) {
+                        drawDestinationSmall(dest,matrix);
+                    }
+                    if (informationId != null) {
+                        drawInformation2(info2, matrix);
                     }
                 }
                 if(informationMode === "carNumber_destination") {
@@ -170,7 +194,7 @@ function createDisplayMatrix () {
             }
             if(informationMode === "information2") {
                 if (information2Id != null) {
-                    drawInformation2(info2, matrix);
+                    drawInformation2Small(info2, matrix);
                 }
             }
             if(informationMode === "information_small1") {
@@ -278,4 +302,4 @@ function drawImage(displayData, startX, startY, matrix) {
 function clearMatrix() {
     ctx.fillStyle = "rgb(0,0,0)";
     ctx.fillRect(0, 0, led.width, led.height);
-                   }
+                }
