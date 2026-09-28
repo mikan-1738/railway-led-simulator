@@ -641,8 +641,8 @@ function isTypeFullScreen(type) {
 
     if(!type) return false;
 
-    const hasNormal = !!type.view.normal;
-    const hasFull = !!type.view.full;
+    const hasNormal = !!type.view?.normal;
+    const hasFull = !!type.view?.full;
 
     if(hasFull && !hasNormal){
         return true;
