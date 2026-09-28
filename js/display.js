@@ -661,8 +661,8 @@ function isCarNumberFullScreen(carNumber) {
 
     if(!carNumber) return false;
 
-    const hasNormal = !!carNumber.view.normal;
-    const hasFull = !!carNumber.view.full;
+    const hasNormal = !!carNumber.view?.normal;
+    const hasFull = !!carNumber.view?.full;
 
     if(hasFull && !hasNormal){
         return true;
@@ -679,8 +679,8 @@ function isDestinationFullScreen(dest) {
 
     if(!dest) return false;
 
-    const hasNormal = !!dest.view.normal;
-    const hasFull = !!dest.view.full;
+    const hasNormal = !!dest.view?.normal;
+    const hasFull = !!dest.view?.full;
 
     if(hasFull && !hasNormal){
         return true;
