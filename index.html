@@ -190,16 +190,144 @@
     <footer id="status">
     </footer>
 
+
+    <!--
+        スマホ用 JavaScript エラー表示
+        エラーが発生した場合、画面下に表示されます。
+    -->
+
+    <div id="errorDisplay"
+         hidden
+         style="
+            position:fixed;
+            left:10px;
+            right:10px;
+            bottom:10px;
+            z-index:99999;
+            background:#160b10;
+            color:#ffd9e3;
+            border:2px solid #ff5c8a;
+            border-radius:10px;
+            padding:12px;
+            box-sizing:border-box;
+            font-family:monospace;
+            font-size:13px;
+            line-height:1.5;
+            max-height:45vh;
+            overflow:auto;
+            white-space:pre-wrap;
+            box-shadow:0 4px 20px rgba(0,0,0,.35);
+         ">
+
+        <strong style="
+            display:block;
+            margin-bottom:6px;
+        ">
+            JavaScriptエラー
+        </strong>
+
+        <div id="errorDisplayText"></div>
+
+    </div>
+
+
+    <!--
+        エラー監視
+    -->
+
+    <script>
+
+        (function () {
+
+            const box = document.getElementById("errorDisplay");
+            const text = document.getElementById("errorDisplayText");
+
+            function showError(message) {
+
+                box.hidden = false;
+
+                text.textContent +=
+                    (text.textContent ? "\n\n" : "") +
+                    message;
+
+            }
+
+
+            /*
+             * 通常のJavaScriptエラー
+             */
+
+            window.addEventListener("error", function (event) {
+
+                const file =
+                    event.filename || "不明";
+
+                const line =
+                    event.lineno || "?";
+
+                const column =
+                    event.colno || "?";
+
+                showError(
+                    "エラー: " +
+                    (event.message || "不明なエラー") +
+                    "\n場所: " +
+                    file +
+                    "\n行: " +
+                    line +
+                    "\n列: " +
+                    column
+                );
+
+            });
+
+
+            /*
+             * Promise / async のエラー
+             */
+
+            window.addEventListener(
+                "unhandledrejection",
+                function (event) {
+
+                    let reason = event.reason;
+
+                    if (reason instanceof Error) {
+
+                        reason =
+                            reason.stack ||
+                            reason.message;
+
+                    }
+
+                    showError(
+                        "Promiseエラー:\n" +
+                        String(reason)
+                    );
+
+                }
+            );
+
+        })();
+
+    </script>
+
+
+    <!--
+        LEDシミュレーター本体
+    -->
+
     <script src="js/state.js"></script>
-<script src="js/constants.js"></script>
-<script src="js/dom.js"></script>
-<script src="js/json.js"></script>
-<script src="js/buttons.js"></script>
-<script src="js/display.js"></script>
-<script src="js/render.js"></script>
-<script src="js/vehicle.js"></script>
-<script src="js/script.js"></script>
+    <script src="js/constants.js"></script>
+    <script src="js/dom.js"></script>
+    <script src="js/json.js"></script>
+    <script src="js/buttons.js"></script>
+    <script src="js/display.js"></script>
+    <script src="js/render.js"></script>
+    <script src="js/vehicle.js"></script>
+    <script src="js/script.js"></script>
+
 
 </body>
 
-</html>
+    </html>
