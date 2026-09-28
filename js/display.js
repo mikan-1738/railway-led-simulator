@@ -739,8 +739,8 @@ function isLineFullScreen(info) {
 
     if(!info) return false;
 
-    const hasNormal = !!info.view.normal;
-    const hasFull = !!info.view.full;
+    const hasNormal = !!info.view?.normal;
+    const hasFull = !!info.view?.full;
 
     if(hasFull && !hasNormal){
         return true;
@@ -757,8 +757,8 @@ function isNextFullScreen(next) {
 
     if(!next) return false;
 
-    const hasNormal = !!next.view.normal;
-    const hasFull = !!next.view.full;
+    const hasNormal = !!next.view?.normal;
+    const hasFull = !!next.view?.full;
 
     if(hasFull && !hasNormal){
         return true;
