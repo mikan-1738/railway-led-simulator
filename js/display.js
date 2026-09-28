@@ -699,8 +699,8 @@ function isInformationFullScreen(info) {
 
     if(!info) return false;
 
-    const hasNormal = !!info.view.normal;
-    const hasFull = !!info.view.full || !!info.view.full_small || !!info.view.full_small1 || !!info.view.full_small2;
+    const hasNormal = !!info.view?.normal;
+    const hasFull = !!info.view?.full || !!info.view?.full_small || !!info.view?.full_small1 || !!info.view?.full_small2;
 
     if(hasFull && !hasNormal){
         return true;
@@ -719,8 +719,8 @@ function isInformation2FullScreen(info2) {
 
     if(!info2) return false;
 
-    const hasNormal = !!info2.view.normal;
-    const hasFull = !!info2.view.full;
+    const hasNormal = !!info2.view?.normal;
+    const hasFull = !!info2.view?.full;
 
     if(hasFull && !hasNormal){
         return true;
