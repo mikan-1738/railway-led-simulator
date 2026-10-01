@@ -14,10 +14,21 @@
           "text": "急行"
         },
         {
-          "id": "rapid",
-          "name": "快速",
-          "text": "快速"
-        },
+  "id": "rapid",
+  "name": "快速",
+  "text": "快速",
+  "view": {
+    "normal": {
+      "ja": {
+        "name": "快速",
+        "width": 40,
+        "height": 32,
+        "data": [
+        ]
+      }
+    }
+  }
+},
         {
           "id": "section_express",
           "name": "区急",
