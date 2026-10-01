@@ -37,7 +37,7 @@
       "name": "種別",
       "items": [
         {
-          "id": "section_express",
+          "id": "item_0001",
           "view": {
             "normal": {
               "ja": {
