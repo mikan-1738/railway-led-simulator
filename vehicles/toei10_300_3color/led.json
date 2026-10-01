@@ -35,10 +35,6 @@
       ]
     }
   ]
-}
-      }
-    }
-  }
 },
         {
   "categories": [
@@ -47,7 +43,7 @@
       "name": "種別",
       "items": [
         {
-          "id": "item_0001",
+          "id": "section_express",
           "view": {
             "normal": {
               "ja": {
