@@ -457,34 +457,17 @@
     </script>
 
 
-    <!-- GoatCounter Visitor Count -->
-    <script>
-
-        var visitorCounterTimer =
-            setInterval(function () {
-
-                if (
-                    window.goatcounter &&
-                    window.goatcounter.visit_count
-                ) {
-
-                    clearInterval(
-                        visitorCounterTimer
-                    );
-
-                    window.goatcounter.visit_count({
-
-                        path: "TOTAL",
-
-                        append: "#visitorCount"
-
-                    });
-
-                }
-
-            }, 100);
-
-    </script>
+  <!-- GoatCounter Visitor Count -->
+<script>
+    fetch("https://mikan-1738.goatcounter.com/counter/TOTAL.json")
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById("visitorCount").textContent = data.count;
+        })
+        .catch(error => {
+            console.error("Visitor counter error:", error);
+        });
+</script>
 
 
     <!-- Simulator JavaScript -->
