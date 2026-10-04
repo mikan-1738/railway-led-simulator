@@ -1,183 +1,127 @@
-<html>
+<!DOCTYPE html>
+<html lang="ja">
 <head>
-
     <meta charset="UTF-8">
-
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>LED方向幕シミュレーター</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=M+PLUS+1:wght@500;700&display=swap" rel="stylesheet">
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=M+PLUS+1:wght@500;700&display=swap"
+        rel="stylesheet"
+    >
+
     <link rel="stylesheet" href="style.css">
 
+    <!-- GoatCounter -->
+    <script
+        data-goatcounter="https://mikan-1738.goatcounter.com/count"
+        async
+        src="//gc.zgo.at/count.js">
+    </script>
 </head>
 
 <body>
 
+    <!-- Loading -->
     <div id="loading" hidden>
-        <span>Loading</span><span class="loadingDots"></span>
+        <span>Loading</span>
+        <span class="loadingDots"></span>
     </div>
 
+
+    <!-- Title -->
     <header id="tittle">
-
         <h1>LED方向幕シミュレーター</h1>
-
     </header>
 
+
+    <!-- Visitor Counter -->
+    <div id="visitorCounter">
+        累計訪問者数：
+        <span id="visitorCount">---</span>
+    </div>
+
+
+    <!-- Vehicle Selector -->
     <div id="vehicleSelector">
 
-        <label id="vehicle">車両を選択</label>
-        <div id="vehicleSelect" class="selectGroup"></div>
+        <label id="vehicle">
+            車両を選択
+        </label>
+
+        <div
+            id="vehicleSelect"
+            class="selectGroup">
+        </div>
 
     </div>
 
+
+    <!-- Simulator -->
     <div id="simulator" hidden>
 
         <div class="container">
 
+            <!-- Sidebar -->
             <aside id="sidebar">
 
                 <div id="setTime">
-
-                    <div id="jaTime" class="timeSetting" hidden>
-                        <span>日本語:</span>
-
-                        <div class="numberInput">
-                            <button type="button" class="minus">−</button>
-                            <input type="number" value="3" min="0.1" step="0.1">
-                            <button type="button" class="plus">＋</button>
-                        </div>
-
-                        <span>秒</span>
-                    </div>
-
-                    <div id="enTime" class="timeSetting" hidden>
-                        <span>英語:</span>
-
-                        <div class="numberInput">
-                            <button type="button" class="minus">−</button>
-                            <input type="number" value="2" min="0.1" step="0.1">
-                            <button type="button" class="plus">＋</button>
-                        </div>
-
-                        <span>秒</span>
-                    </div>
-
-                    <div id="infoTime" class="timeSetting" hidden>
-                        <span>案内:</span>
-
-                        <div class="numberInput">
-                            <button type="button" class="minus">−</button>
-                            <input type="number" value="2" min="0.1" step="0.1">
-                            <button type="button" class="plus">＋</button>
-                        </div>
-
-                        <span>秒</span>
-                    </div>
-
-                    <div id="carNumberTime" class="timeSetting" hidden>
-                        <span>号車:</span>
-
-                        <div class="numberInput">
-                            <button type="button" class="minus">−</button>
-                            <input type="number" value="2" min="0.1" step="0.1">
-                            <button type="button" class="plus">＋</button>
-                        </div>
-
-                        <span>秒</span>
-                    </div>
-
+                    ...
                 </div>
 
                 <div id="buttonGroup">
-
-                    <div id="typeGroup">
-                        <label id="type" class="displayLabel">種別:なし</label>
-                        <div id="typeButtons" class="buttonGroup"></div>
-                    </div>
-
-                    <div id="destinationGroup">
-                        <label id="destination" class="displayLabel">行先:なし</label>
-                        <div id="destinationButtons" class="buttonGroup"></div>
-                    </div>
-
-                    <div id="informationGroup">
-                        <label id="information" class="displayLabel">案内:なし</label>
-                        <div id="informationButtons" class="buttonGroup"></div>
-                    </div>
-
-                    <div id="information2Group">
-                        <label id="information2" class="displayLabel">案内2:なし</label>
-                        <div id="information2Buttons" class="buttonGroup"></div>
-                    </div>
-
-                    <div id="lineGroup">
-                        <label id="line" class="displayLabel">路線名:なし</label>
-                        <div id="lineButtons" class="buttonGroup"></div>
-                    </div>
-
-                    <div id="nextModeGroup">
-                        <label id="nextMode" class="displayLabel">次駅:なし</label>
-                        <div id="nextModeButtons" class="buttonGroup"></div>
-                    </div>
-
-                    <div id="carNumberGroup">
-                        <label id="carNumber" class="displayLabel">号車:なし</label>
-                        <div id="carNumberButtons" class="buttonGroup"></div>
-                    </div>
-
+                    ...
                 </div>
 
                 <div id="scroll" hidden>
-
-                    <label>
-                        <input type="checkbox" id="scrollCheck">
-                        スクロール
-                    </label>
-
-                    <textarea id="scrollText" hidden></textarea>
-
-                    <button id="startScrollBtn" hidden>
-                        スクロール更新
-                    </button>
-
+                    ...
                 </div>
 
+
+                <!-- Vehicle Explanation -->
                 <div id="explanation">
 
-                    <h2>車両説明</h2>
+                    <h2>
+                        車両説明
+                    </h2>
 
                     <div id="explanationLabel"></div>
 
                 </div>
 
+
+                <!-- Reference Site -->
                 <div id="referenceSite" hidden>
-
-                    <h2>参考サイト</h2>
-
-                    <label>
-                        一部の再現ドットは、以下のサイトに掲載されている再現画像を参考にドット打ちさせていただきました。
-                    </label>
-
-                    <div id="referenceSiteLink"></div>
-
+                    ...
                 </div>
 
+
+                <!-- Back to Vehicle Selection -->
                 <button id="vehicleSelectButton">
                     車両選択に戻る
                 </button>
 
             </aside>
 
+
+            <!-- Resizer -->
             <div id="resizer"></div>
 
+
+            <!-- LED Display -->
             <main>
 
                 <div class="ledFrame">
 
-                    <canvas id="led" width="895" height="223"></canvas>
+                    <canvas
+                        id="led"
+                        width="895"
+                        height="223">
+                    </canvas>
 
                 </div>
 
@@ -187,122 +131,82 @@
 
     </div>
 
-    <footer id="status">
-    </footer>
+
+    <!-- Status -->
+    <footer id="status"></footer>
 
 
-    <!--
-        スマホ用 JavaScript エラー表示
-        エラーが発生した場合、画面下に表示されます。
-    -->
+    <!-- Mobile JS Error Display -->
+    <div
+        id="errorDisplay"
+        hidden
+        style="
+            position: fixed;
+            left: 10px;
+            right: 10px;
+            bottom: 10px;
+            z-index: 99999;
+            padding: 12px;
+            background: #222;
+            color: #fff;
+            border-radius: 8px;
+            font-size: 13px;
+            white-space: pre-wrap;
+            word-break: break-word;
+        "
+    >
 
-    <div id="errorDisplay"
-         hidden
-         style="
-            position:fixed;
-            left:10px;
-            right:10px;
-            bottom:10px;
-            z-index:99999;
-            background:#160b10;
-            color:#ffd9e3;
-            border:2px solid #ff5c8a;
-            border-radius:10px;
-            padding:12px;
-            box-sizing:border-box;
-            font-family:monospace;
-            font-size:13px;
-            line-height:1.5;
-            max-height:45vh;
-            overflow:auto;
-            white-space:pre-wrap;
-            box-shadow:0 4px 20px rgba(0,0,0,.35);
-         ">
-
-        <strong style="
-            display:block;
-            margin-bottom:6px;
-        ">
-            JavaScriptエラー
-        </strong>
+        <strong>JavaScript Error</strong>
 
         <div id="errorDisplayText"></div>
 
     </div>
 
 
-    <!--
-        エラー監視
-    -->
-
+    <!-- Error Detection -->
     <script>
 
         (function () {
 
-            const box = document.getElementById("errorDisplay");
-            const text = document.getElementById("errorDisplayText");
+            const box =
+                document.getElementById("errorDisplay");
+
+            const text =
+                document.getElementById("errorDisplayText");
+
 
             function showError(message) {
 
                 box.hidden = false;
-
-                text.textContent +=
-                    (text.textContent ? "\n\n" : "") +
-                    message;
+                text.textContent = message;
 
             }
 
 
-            /*
-             * 通常のJavaScriptエラー
-             */
+            window.addEventListener(
+                "error",
+                function (event) {
 
-            window.addEventListener("error", function (event) {
+                    showError(
+                        event.message +
+                        "\n" +
+                        event.filename +
+                        ":" +
+                        event.lineno +
+                        ":" +
+                        event.colno
+                    );
 
-                const file =
-                    event.filename || "不明";
+                }
+            );
 
-                const line =
-                    event.lineno || "?";
-
-                const column =
-                    event.colno || "?";
-
-                showError(
-                    "エラー: " +
-                    (event.message || "不明なエラー") +
-                    "\n場所: " +
-                    file +
-                    "\n行: " +
-                    line +
-                    "\n列: " +
-                    column
-                );
-
-            });
-
-
-            /*
-             * Promise / async のエラー
-             */
 
             window.addEventListener(
                 "unhandledrejection",
                 function (event) {
 
-                    let reason = event.reason;
-
-                    if (reason instanceof Error) {
-
-                        reason =
-                            reason.stack ||
-                            reason.message;
-
-                    }
-
                     showError(
-                        "Promiseエラー:\n" +
-                        String(reason)
+                        String(event.reason)
                     );
 
                 }
@@ -313,10 +217,37 @@
     </script>
 
 
-    <!--
-        LEDシミュレーター本体
-    -->
+    <!-- GoatCounter Visitor Count -->
+    <script>
 
+        var visitorCounterTimer =
+            setInterval(function () {
+
+                if (
+                    window.goatcounter &&
+                    window.goatcounter.visit_count
+                ) {
+
+                    clearInterval(
+                        visitorCounterTimer
+                    );
+
+                    window.goatcounter.visit_count({
+
+                        path: "TOTAL",
+
+                        append: "#visitorCount"
+
+                    });
+
+                }
+
+            }, 100);
+
+    </script>
+
+
+    <!-- Simulator JavaScript -->
     <script src="js/state.js"></script>
     <script src="js/constants.js"></script>
     <script src="js/dom.js"></script>
@@ -327,7 +258,5 @@
     <script src="js/vehicle.js"></script>
     <script src="js/script.js"></script>
 
-
 </body>
-
-    </html>
+</html>
