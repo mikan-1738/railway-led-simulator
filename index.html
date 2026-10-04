@@ -69,16 +69,251 @@
             <!-- Sidebar -->
             <aside id="sidebar">
 
+                <!-- Time Settings -->
                 <div id="setTime">
-                    ...
+
+                    <div id="jaTime" class="numberInput" hidden>
+                        <label>日本語切替時間</label>
+
+                        <button
+                            type="button"
+                            class="minus">
+                            −
+                        </button>
+
+                        <input
+                            type="number"
+                            value="3"
+                            min="1">
+
+                        <button
+                            type="button"
+                            class="plus">
+                            ＋
+                        </button>
+                    </div>
+
+
+                    <div id="enTime" class="numberInput" hidden>
+                        <label>英語切替時間</label>
+
+                        <button
+                            type="button"
+                            class="minus">
+                            −
+                        </button>
+
+                        <input
+                            type="number"
+                            value="3"
+                            min="1">
+
+                        <button
+                            type="button"
+                            class="plus">
+                            ＋
+                        </button>
+                    </div>
+
+
+                    <div id="infoTime" class="numberInput" hidden>
+                        <label>案内表示時間</label>
+
+                        <button
+                            type="button"
+                            class="minus">
+                            −
+                        </button>
+
+                        <input
+                            type="number"
+                            value="3"
+                            min="1">
+
+                        <button
+                            type="button"
+                            class="plus">
+                            ＋
+                        </button>
+                    </div>
+
+
+                    <div id="carNumberTime" class="numberInput" hidden>
+                        <label>号車表示時間</label>
+
+                        <button
+                            type="button"
+                            class="minus">
+                            −
+                        </button>
+
+                        <input
+                            type="number"
+                            value="3"
+                            min="1">
+
+                        <button
+                            type="button"
+                            class="plus">
+                            ＋
+                        </button>
+                    </div>
+
                 </div>
 
+
+                <!-- Button Groups -->
                 <div id="buttonGroup">
-                    ...
+
+                    <!-- Type -->
+                    <div
+                        id="typeGroup"
+                        class="buttonGroup">
+
+                        <div
+                            class="displayLabel"
+                            id="type">
+                            種別:なし
+                        </div>
+
+                        <div id="typeButtons"></div>
+
+                    </div>
+
+
+                    <!-- Destination -->
+                    <div
+                        id="destinationGroup"
+                        class="buttonGroup">
+
+                        <div
+                            class="displayLabel"
+                            id="destination">
+                            行先:なし
+                        </div>
+
+                        <div id="destinationButtons"></div>
+
+                    </div>
+
+
+                    <!-- Information -->
+                    <div
+                        id="informationGroup"
+                        class="buttonGroup"
+                        hidden>
+
+                        <div
+                            class="displayLabel"
+                            id="information">
+                            案内:なし
+                        </div>
+
+                        <div id="informationButtons"></div>
+
+                    </div>
+
+
+                    <!-- Information 2 -->
+                    <div
+                        id="information2Group"
+                        class="buttonGroup"
+                        hidden>
+
+                        <div
+                            class="displayLabel"
+                            id="information2">
+                            案内2:なし
+                        </div>
+
+                        <div id="information2Buttons"></div>
+
+                    </div>
+
+
+                    <!-- Line -->
+                    <div
+                        id="lineGroup"
+                        class="buttonGroup"
+                        hidden>
+
+                        <div
+                            class="displayLabel"
+                            id="line">
+                            路線名:なし
+                        </div>
+
+                        <div id="lineButtons"></div>
+
+                    </div>
+
+
+                    <!-- Next Station -->
+                    <div
+                        id="nextModeGroup"
+                        class="buttonGroup"
+                        hidden>
+
+                        <div
+                            class="displayLabel"
+                            id="nextMode">
+                            次駅:なし
+                        </div>
+
+                        <div id="nextModeButtons"></div>
+
+                    </div>
+
+
+                    <!-- Car Number -->
+                    <div
+                        id="carNumberGroup"
+                        class="buttonGroup"
+                        hidden>
+
+                        <div
+                            class="displayLabel"
+                            id="carNumber">
+                            号車:なし
+                        </div>
+
+                        <div id="carNumberButtons"></div>
+
+                    </div>
+
                 </div>
 
+
+                <!-- Scroll -->
                 <div id="scroll" hidden>
-                    ...
+
+                    <label for="scrollText">
+                        スクロール表示
+                    </label>
+
+                    <textarea
+                        id="scrollText">
+                    </textarea>
+
+
+                    <label>
+                        <input
+                            type="checkbox"
+                            id="scrollCheck">
+
+                        スクロールを有効にする
+                    </label>
+
+
+                    <button
+                        type="button"
+                        id="startScrollBtn"
+                        hidden>
+
+                        スクロール開始
+
+                    </button>
+
                 </div>
 
 
@@ -96,7 +331,9 @@
 
                 <!-- Reference Site -->
                 <div id="referenceSite" hidden>
-                    ...
+
+                    <div id="referenceSiteLink"></div>
+
                 </div>
 
 
@@ -176,6 +413,10 @@
 
 
             function showError(message) {
+
+                if (!box || !text) {
+                    return;
+                }
 
                 box.hidden = false;
                 text.textContent = message;
@@ -259,4 +500,4 @@
     <script src="js/script.js"></script>
 
 </body>
-</html>
+                    </html>
